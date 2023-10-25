@@ -1,5 +1,5 @@
 from pico2d import *
-from stage import StartStage
+from stage import Stage
 from character import Character
 import game_world
 
@@ -20,7 +20,7 @@ def reset_world():
 
     running = True
 
-    stage = StartStage()
+    stage = Stage()
     game_world.add_object(stage, 0)
 
 
