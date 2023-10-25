@@ -1,32 +1,7 @@
 from pico2d import *
-
-
-class Stage:
-    def __init__(self):
-        self.image = load_image('start_stage.png')
-        self.frame = 0
-
-    def draw(self):
-        self.image.clip_draw(0, 0, 2200, 600, 1100 + self.frame, 300, 2200, 600)
-
-    def update(self):
-        self.frame = self.frame - 10
-        if self.frame <= -1300:
-            self.frame = -100
-
-
-class Character:
-    def __init__(self):
-        self.x, self.y = 400, 150
-        self.frame = 0
-        self.image = load_image('character.png')
-
-    def update(self):
-        self.frame = (self.frame + 1) % 4
-        delay(0.07)
-
-    def draw(self):
-        self.image.clip_draw(self.frame * 45, 495, 45, 45, self.x, self.y, 135, 135)
+from stage import Stage
+from character import Character
+import game_world
 
 
 def handle_events():
@@ -43,27 +18,23 @@ def reset_world():
     global running
     global stage
     global character
-    global world
 
     running = True
-    world = []
 
     stage = Stage()
-    world.append(stage)
+    game_world.add_object(stage, 0)
 
     character = Character()
-    world.append(character)
+    game_world.add_object(character, 1)
 
 
 def update_world():
-    for o in world:
-        o.update()
+    game_world.update()
 
 
 def render_world():
     clear_canvas()
-    for o in world:
-        o.draw()
+    game_world.render()
     update_canvas()
 
 
