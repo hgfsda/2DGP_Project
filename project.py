@@ -1,5 +1,5 @@
 from pico2d import *
-from stage import Stage
+from stage import StartStage
 from character import Character
 import game_world
 
@@ -17,15 +17,11 @@ def handle_events():
 def reset_world():
     global running
     global stage
-    global character
 
     running = True
 
-    stage = Stage()
+    stage = StartStage()
     game_world.add_object(stage, 0)
-
-    character = Character()
-    game_world.add_object(character, 1)
 
 
 def update_world():
