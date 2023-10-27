@@ -33,6 +33,24 @@ class StartStage:
         stage.start_image.clip_draw(200, 10, 30, 60, 165, 260 - (110 * stage.check_y), 60, 120)  # 화살표 위치
 
 
+class Stage:
+    @staticmethod
+    def enter(stage, e):
+        pass
+
+    @staticmethod
+    def exit(stage, e):
+        pass
+
+    @staticmethod
+    def do(stage):
+        pass
+
+    @staticmethod
+    def draw(stage):
+        pass
+
+
 class StateMachine:
     def __init__(self, stage):
         self.stage = stage
