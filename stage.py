@@ -1,4 +1,4 @@
-from pico2d import load_image, SDL_KEYDOWN, SDLK_UP, SDLK_DOWN
+from pico2d import load_image, SDL_KEYDOWN, SDLK_UP, SDLK_DOWN, SDLK_RETURN
 
 
 def up_down(e):
@@ -6,6 +6,9 @@ def up_down(e):
 
 def down_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_DOWN
+
+def enter_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_RETURN
 
 
 class StartStage:
@@ -16,7 +19,8 @@ class StartStage:
 
     @staticmethod
     def exit(stage, e):
-        pass
+        if enter_down(e) and stage.check_y == 1:
+            stage.running = False
 
     @staticmethod
     def do(stage):
@@ -33,7 +37,7 @@ class StartStage:
         stage.start_image.clip_draw(200, 10, 30, 60, 165, 260 - (110 * stage.check_y), 60, 120)  # 화살표 위치
 
 
-class Stage:
+class PlayStage:
     @staticmethod
     def enter(stage, e):
         pass
@@ -56,7 +60,8 @@ class StateMachine:
         self.stage = stage
         self.cur_state = StartStage
         self.transitions = {
-            StartStage: {up_down: StartStage, down_down: StartStage}
+            StartStage: {up_down: StartStage, down_down: StartStage, enter_down: PlayStage},
+            PlayStage: {enter_down: PlayStage}
         }
 
     def start(self):
@@ -85,6 +90,7 @@ class Stage:
         self.start_image = load_image('start.png')
         self.frame = 0
         self.check_y = 0    # 시작 화면에서 start exit 표시해주는 화살표 위치
+        self.running = True
         self.state_machine = StateMachine(self)
         self.state_machine.start()
 

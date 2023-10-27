@@ -14,6 +14,8 @@ def handle_events():
             running = False
         else:
             stage.handle_event(event)
+            if stage.running == False:
+                running = False
 
 
 def reset_world():
