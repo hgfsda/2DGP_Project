@@ -1,7 +1,7 @@
 from pico2d import *
 from stage import Stage
 from character import Character
-import game_world
+from Drill10 import game_world
 
 
 def handle_events():

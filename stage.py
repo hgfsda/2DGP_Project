@@ -1,5 +1,7 @@
 from pico2d import load_image, SDL_KEYDOWN, SDLK_UP, SDLK_DOWN, SDLK_RETURN
 
+from Drill10 import game_world
+from character import Character
 
 def up_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_UP
@@ -40,7 +42,7 @@ class StartStage:
 class PlayStage:
     @staticmethod
     def enter(stage, e):
-        pass
+        stage.character_create()
 
     @staticmethod
     def exit(stage, e):
@@ -52,7 +54,7 @@ class PlayStage:
 
     @staticmethod
     def draw(stage):
-        pass
+        stage.play_stage_image.clip_draw(0, 1360, 1190, 600, stage.x, 300, 1800, 600)
 
 
 class StateMachine:
@@ -88,8 +90,10 @@ class Stage:
     def __init__(self):
         self.stage_image = load_image('start_stage.png')
         self.start_image = load_image('start.png')
+        self.play_stage_image = load_image('stage.png')
         self.frame = 0
         self.check_y = 0    # 시작 화면에서 start exit 표시해주는 화살표 위치
+        self.x = 400        # 배경 위치
         self.running = True
         self.state_machine = StateMachine(self)
         self.state_machine.start()
@@ -103,3 +107,6 @@ class Stage:
     def draw(self):
         self.state_machine.draw()
 
+    def character_create(self):
+        character = Character()
+        game_world.add_object(character, 1)
