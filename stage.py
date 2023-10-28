@@ -54,7 +54,7 @@ class PlayStage:
 
     @staticmethod
     def draw(stage):
-        stage.play_stage_image.clip_draw(0, 1360, 1190, 600, stage.x, 300, 1800, 600)
+        stage.play_stage_image.clip_draw(0, 1360 - (660*abs(stage.character_stage - stage.ai_stage)//2), 1190, 600, stage.x, 300, 1800, 600)
 
 
 class StateMachine:
@@ -94,6 +94,8 @@ class Stage:
         self.frame = 0
         self.check_y = 0    # 시작 화면에서 start exit 표시해주는 화살표 위치
         self.x = 400        # 배경 위치
+        self.character_stage = 3          # 주인공 스테이지 위치
+        self.ai_stage = 3                 # ai 스테이지 위치      / 스테이지 위치는 |주인공 - ai| / 2로 계산
         self.running = True
         self.state_machine = StateMachine(self)
         self.state_machine.start()
