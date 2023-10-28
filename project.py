@@ -1,7 +1,7 @@
 from pico2d import *
 from stage import Stage
 from character import Character
-from Drill10 import game_world
+import game_world
 
 
 def handle_events():
@@ -13,19 +13,24 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
         else:
+            character.handle_event(event)
             stage.handle_event(event)
             if stage.running == False:
                 running = False
 
 
+
 def reset_world():
     global running
     global stage
+    global character
 
     running = True
 
     stage = Stage()
     game_world.add_object(stage, 0)
+
+    character = Character()
 
 
 def update_world():

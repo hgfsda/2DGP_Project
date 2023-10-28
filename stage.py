@@ -1,6 +1,6 @@
 from pico2d import load_image, SDL_KEYDOWN, SDLK_UP, SDLK_DOWN, SDLK_RETURN
 
-from Drill10 import game_world
+import game_world
 from character import Character
 
 def up_down(e):
