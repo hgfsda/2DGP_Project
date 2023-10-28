@@ -57,13 +57,50 @@ class PlayStage:
         stage.play_stage_image.clip_draw(0, 1360 - (660*abs(stage.character_stage - stage.ai_stage)//2), 1190, 600, stage.x, 300, 1800, 600)
 
 
+class WinStage:
+    @staticmethod
+    def enter(stage, e):
+        pass
+
+    @staticmethod
+    def exit(stage, e):
+        pass
+
+    @staticmethod
+    def do(stage):
+        pass
+
+    @staticmethod
+    def draw(stage):
+        stage.final_image.clip_draw(0, 0, 1200, 600, 400, 300, 800, 600)
+
+
+class LoseStage:
+    @staticmethod
+    def enter(stage, e):
+        pass
+
+    @staticmethod
+    def exit(stage, e):
+        pass
+
+    @staticmethod
+    def do(stage):
+        pass
+
+    @staticmethod
+    def draw(stage):
+        stage.final_image.clip_draw(0, 0, 1200, 600, 400, 300, 800, 600)
+
 class StateMachine:
     def __init__(self, stage):
         self.stage = stage
         self.cur_state = StartStage
         self.transitions = {
             StartStage: {up_down: StartStage, down_down: StartStage, enter_down: PlayStage},
-            PlayStage: {enter_down: PlayStage}
+            PlayStage: {enter_down: PlayStage},
+            WinStage: {},
+            LoseStage: {},
         }
 
     def start(self):
@@ -91,6 +128,7 @@ class Stage:
         self.stage_image = load_image('start_stage.png')
         self.start_image = load_image('start.png')
         self.play_stage_image = load_image('stage.png')
+        self.final_image = load_image('final_stage.png')
         self.frame = 0
         self.check_y = 0    # 시작 화면에서 start exit 표시해주는 화살표 위치
         self.x = 400        # 배경 위치
