@@ -17,7 +17,7 @@ class Idle:
 
     @staticmethod
     def draw(character):
-        character.image.clip_draw(character.frame * 45, 495, 45, 45, character.x, 150, 135, 135)
+        character.image.clip_draw(character.frame * 45, 495 - (135 * character.sword_position), 45, 45, character.x, 150, 135, 135)
 
 
 class StateMachine:
@@ -51,6 +51,7 @@ class StateMachine:
 class Character:
     def __init__(self):
         self.x = 400
+        self.sword_position = 1                    # 검의 위치 / 상단 2 , 중단 1, 하단 0
         self.frame = 0
         self.image = load_image('character.png')
         self.state_machine = StateMachine(self)
