@@ -1,5 +1,5 @@
 from pico2d import *
-from stage import Stage
+from stage import *
 from character import Character
 import game_world
 
@@ -12,11 +12,13 @@ def handle_events():
             running = False
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
-        else:
-            character.handle_event(event)
+        elif stage.state_machine.cur_state == StartStage:
             stage.handle_event(event)
             if stage.running == False:
                 running = False
+        elif stage.state_machine.cur_state == PlayStage:
+            character.handle_event(event)
+
 
 
 
@@ -31,6 +33,7 @@ def reset_world():
     game_world.add_object(stage, 0)
 
     character = Character()
+    game_world.add_object(character, 1)
 
 
 def update_world():
@@ -50,6 +53,5 @@ while running:
     handle_events()
     update_world()
     render_world()
-    delay(0.05)
 
 close_canvas()

@@ -1,4 +1,20 @@
-from pico2d import load_image, delay
+from pico2d import load_image, delay, SDL_KEYDOWN, SDL_KEYUP, SDLK_RIGHT, SDLK_LEFT
+
+
+def right_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_RIGHT
+
+
+def right_up(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_RIGHT
+
+
+def left_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_LEFT
+
+
+def left_up(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_LEFT
 
 
 class Run:
@@ -25,7 +41,11 @@ class Move:
 
     @staticmethod
     def enter(character, e):
-        pass
+        if right_down(e) or left_up(e): # 오른쪽으로 Move
+            character.dir = 1
+        elif left_down(e) or right_up(e): # 왼쪽으로 Move
+            character.dir = -1
+
 
     @staticmethod
     def exit(character, e):
@@ -34,7 +54,8 @@ class Move:
     @staticmethod
     def do(character):
         character.frame = (character.frame + 1) % 4
-        delay(0.07)
+        character.x += character.dir * 5
+        delay(0.05)
 
     @staticmethod
     def draw(character):
@@ -45,7 +66,7 @@ class Move:
 class Idle:
     @staticmethod
     def enter(character, e):
-        pass
+        character.dir = 0
 
     @staticmethod
     def exit(character, e):
@@ -54,7 +75,7 @@ class Idle:
     @staticmethod
     def do(character):
         character.frame = (character.frame + 1) % 4
-        delay(0.07)
+        delay(0.1)
 
     @staticmethod
     def draw(character):
@@ -65,11 +86,10 @@ class Idle:
 class StateMachine:
     def __init__(self, character):
         self.character = character
-        self.cur_state = Run
+        self.cur_state = Idle
         self.transitions = {
-            Idle: {},
-            Move: {},
-            Run: {},
+            Idle: {right_down: Move, left_down: Move, left_up: Move, right_up: Move},
+            Move: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle},
         }
 
     def start(self):
@@ -94,7 +114,7 @@ class StateMachine:
 
 class Character:
     def __init__(self):
-        self.x = 400
+        self.x = 200
         self.sword_position = 1  # 검의 위치 / 상단 2 , 중단 1, 하단 0
         self.dir = 0             # 캐릭터의 방향
         self.frame = 0
