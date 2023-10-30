@@ -1,5 +1,5 @@
 from pico2d import *
-from stage import *
+from stage import Stage
 from character import Character
 import game_world
 import game_framework
