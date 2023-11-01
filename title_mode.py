@@ -19,6 +19,12 @@ def finish():
     pass
 
 def update():
+    global frame
+
+    frame -= 5
+    if frame <= -1300:
+        frame = -100
+    delay(0.03)
     pass
 
 def draw():
