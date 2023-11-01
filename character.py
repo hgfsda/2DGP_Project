@@ -1,4 +1,4 @@
-from pico2d import load_image, delay, SDL_KEYDOWN, SDL_KEYUP, SDLK_RIGHT, SDLK_LEFT
+from pico2d import *
 
 
 def right_down(e):
@@ -15,6 +15,14 @@ def left_down(e):
 
 def left_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_LEFT
+
+
+def up_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_UP
+
+
+def down_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_DOWN
 
 
 class Run:
@@ -45,6 +53,10 @@ class Move:
             character.dir = 1
         elif left_down(e) or right_up(e): # 왼쪽으로 Move
             character.dir = -1
+        if up_down(e) and character.sword_position < 2:
+            character.sword_position += 1
+        if down_down(e) and character.sword_position > 0:
+            character.sword_position -= 1
 
 
     @staticmethod
@@ -67,6 +79,10 @@ class Idle:
     @staticmethod
     def enter(character, e):
         character.dir = 0
+        if up_down(e) and character.sword_position < 2:
+            character.sword_position += 1
+        if down_down(e) and character.sword_position > 0:
+            character.sword_position -= 1
 
     @staticmethod
     def exit(character, e):
@@ -88,8 +104,8 @@ class StateMachine:
         self.character = character
         self.cur_state = Idle
         self.transitions = {
-            Idle: {right_down: Move, left_down: Move, left_up: Move, right_up: Move},
-            Move: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle},
+            Idle: {right_down: Move, left_down: Move, left_up: Move, right_up: Move, up_down: Idle, down_down: Idle},
+            Move: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle, up_down: Move, down_down: Move},
         }
 
     def start(self):
