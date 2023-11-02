@@ -1,4 +1,5 @@
 from pico2d import *
+import game_framework
 
 
 def right_down(e):
@@ -33,6 +34,18 @@ def D_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_d
 
 
+PIXEL_PER_METER = (10.0 / 0.3)
+RUN_SPEED_KMPH = 20.0
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+# Boy Action Speed
+# fill here
+TIME_PER_ACTION = 0.5
+ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+FRAMES_PER_ACTION = 8
+
+
 class Run:
 
     @staticmethod
@@ -49,13 +62,16 @@ class Run:
 
     @staticmethod
     def do(character):
-        character.frame = (character.frame + 1) % 4
-        character.x += character.dir * 10
+        character.frame = (character.frame + 1) % 5
+        character.x += character.dir * 15
         delay(0.05)
 
     @staticmethod
     def draw(character):
-        pass
+        if character.dir == 1:
+            character.run_image.clip_draw(character.frame * 45, 0, 45, 45, character.x, 150, 135, 135)
+        elif character.dir == -1:
+            character.run_image.clip_composite_draw(character.frame * 45, 0, 45, 45, 0, 'h', character.x - 90, 150, 135, 135)
 
 
 class Move:
@@ -126,7 +142,7 @@ class StateMachine:
             Idle: {right_down: Move, left_down: Move, left_up: Move, right_up: Move, up_down: Idle, down_down: Idle},
             Move: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle, up_down: Move, down_down: Move,
                    D_down: Run},
-            Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle, D_up: Move},
+            Run: {right_down: Run, left_down: Run, right_up: Idle, left_up: Idle, D_down: Run, D_up: Move},
         }
 
     def start(self):
@@ -156,6 +172,7 @@ class Character:
         self.dir = 1  # 캐릭터의 방향
         self.frame = 0
         self.image = load_image('character.png')
+        self.run_image = load_image('Character_run.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
 
