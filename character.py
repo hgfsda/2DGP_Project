@@ -58,6 +58,7 @@ class Attack:
     @staticmethod
     def enter(character, e):
         character.frame = 0
+        character.wait_time = get_time()
         pass
 
     @staticmethod
@@ -67,6 +68,8 @@ class Attack:
     @staticmethod
     def do(character):
         character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        if get_time() - character.wait_time > 0.5:
+            character.state_machine.handle_event(('TIME_OUT', 0))
 
     @staticmethod
     def draw(character):
@@ -182,7 +185,7 @@ class StateMachine:
                    A_down: Attack,
                    D_down: Run},
             Run: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, D_down: Run, D_up: Move},
-            Attack: {},
+            Attack: {Attack_time: Idle},
         }
 
     def start(self):
