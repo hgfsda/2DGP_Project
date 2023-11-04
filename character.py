@@ -34,6 +34,14 @@ def D_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_d
 
 
+def A_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_a
+
+
+def Attack_time(e):
+    return e[0] == 'TIME_OUT'
+
+
 PIXEL_PER_METER = (10.0 / 0.3)
 RUN_SPEED_KMPH = 10.0
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
@@ -42,16 +50,43 @@ RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 # character Action Speed
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
-FRAMES_PER_ACTION = 8
+FRAMES_PER_ACTION = 5
+
+
+class Attack:
+
+    @staticmethod
+    def enter(character, e):
+        character.frame = 0
+        pass
+
+    @staticmethod
+    def exit(character, e):
+        pass
+
+    @staticmethod
+    def do(character):
+        character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+
+    @staticmethod
+    def draw(character):
+        if character.face_dir == 1:
+            character.image.clip_draw(int(character.frame) * 45, 360 - (135 * character.sword_position), 45, 45,
+                                      character.x,
+                                      150, 135, 135)
+        elif character.face_dir == 0:
+            character.image.clip_composite_draw(int(character.frame) * 45, 360 - (135 * character.sword_position), 45,
+                                                45, 0,
+                                                'h', character.x - 90, 150, 135, 135)
 
 
 class Run:
 
     @staticmethod
     def enter(character, e):
-        if right_down(e) or left_up(e):
+        if right_down(e):
             character.dir, character.face_dir = 1, 1
-        elif left_down(e) or right_up(e):
+        elif left_down(e):
             character.dir, character.face_dir = -1, 0
         pass
 
@@ -61,16 +96,16 @@ class Run:
 
     @staticmethod
     def do(character):
-        character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 5
+        character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * 1.5 * game_framework.frame_time) % 5
         character.x += character.dir * RUN_SPEED_PPS * 2.5 * game_framework.frame_time
-        delay(0.05)
 
     @staticmethod
     def draw(character):
         if character.face_dir == 1:
             character.run_image.clip_draw(int(character.frame) * 45, 0, 45, 45, character.x, 150, 135, 135)
         elif character.face_dir == 0:
-            character.run_image.clip_composite_draw(int(character.frame) * 45, 0, 45, 45, 0, 'h', character.x - 90, 150, 135, 135)
+            character.run_image.clip_composite_draw(int(character.frame) * 45, 0, 45, 45, 0, 'h', character.x - 90, 150,
+                                                    135, 135)
 
 
 class Move:
@@ -94,15 +129,16 @@ class Move:
     def do(character):
         character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         character.x += character.dir * RUN_SPEED_PPS * game_framework.frame_time
-        delay(0.05)
 
     @staticmethod
     def draw(character):
-        if character.dir == 1:
-            character.image.clip_draw(int(character.frame) * 45, 405 - (135 * character.sword_position), 45, 45, character.x,
+        if character.face_dir == 1:
+            character.image.clip_draw(int(character.frame) * 45, 405 - (135 * character.sword_position), 45, 45,
+                                      character.x,
                                       150, 135, 135)
-        elif character.dir == -1:
-            character.image.clip_composite_draw(int(character.frame) * 45, 405 - (135 * character.sword_position), 45, 45, 0,
+        elif character.face_dir == 0:
+            character.image.clip_composite_draw(int(character.frame) * 45, 405 - (135 * character.sword_position), 45,
+                                                45, 0,
                                                 'h', character.x - 90, 150, 135, 135)
 
 
@@ -122,15 +158,16 @@ class Idle:
     @staticmethod
     def do(character):
         character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
-        delay(0.15)
 
     @staticmethod
     def draw(character):
         if character.face_dir == 1:
-            character.image.clip_draw(int(character.frame) * 45, 450 - (135 * character.sword_position), 45, 45, character.x,
+            character.image.clip_draw(int(character.frame) * 45, 450 - (135 * character.sword_position), 45, 45,
+                                      character.x,
                                       150, 135, 135)
         elif character.face_dir == 0:
-            character.image.clip_composite_draw(int(character.frame) * 45, 450 - (135 * character.sword_position), 45, 45, 0,
+            character.image.clip_composite_draw(int(character.frame) * 45, 450 - (135 * character.sword_position), 45,
+                                                45, 0,
                                                 'h', character.x - 90, 150, 135, 135)
 
 
@@ -139,10 +176,13 @@ class StateMachine:
         self.character = character
         self.cur_state = Idle
         self.transitions = {
-            Idle: {right_down: Move, left_down: Move, left_up: Move, right_up: Move, up_down: Idle, down_down: Idle},
+            Idle: {right_down: Move, left_down: Move, left_up: Move, right_up: Move, up_down: Idle, down_down: Idle,
+                   A_down: Attack},
             Move: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle, up_down: Move, down_down: Move,
+                   A_down: Attack,
                    D_down: Run},
-            Run: {right_down: Move, left_down: Move, right_up: Move, left_up: Move, D_down: Run, D_up: Move},
+            Run: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, D_down: Run, D_up: Move},
+            Attack: {},
         }
 
     def start(self):
