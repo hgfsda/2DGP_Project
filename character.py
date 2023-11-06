@@ -7,7 +7,7 @@ def right_down(e):
 
 
 def right_up(e):
-    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_RIGHT
+    return e[0] == 'INPUT_CHECK' and e[1].type == SDL_KEYUP and e[1].key == SDLK_RIGHT
 
 
 def left_down(e):
@@ -15,7 +15,7 @@ def left_down(e):
 
 
 def left_up(e):
-    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_LEFT
+    return e[0] == 'INPUT_CHECK' and e[1].type == SDL_KEYUP and e[1].key == SDLK_LEFT
 
 
 def up_down(e):
@@ -124,6 +124,7 @@ class Move:
         if down_down(e) and character.sword_position > 0:
             character.sword_position -= 1
 
+
     @staticmethod
     def exit(character, e):
         pass
@@ -132,6 +133,7 @@ class Move:
     def do(character):
         character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         character.x += character.dir * RUN_SPEED_PPS * game_framework.frame_time
+
 
     @staticmethod
     def draw(character):
@@ -179,12 +181,10 @@ class StateMachine:
         self.character = character
         self.cur_state = Idle
         self.transitions = {
-            Idle: {right_down: Move, left_down: Move, left_up: Move, right_up: Move, up_down: Idle, down_down: Idle,
-                   A_down: Attack},
-            Move: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle, up_down: Move, down_down: Move,
-                   A_down: Attack,
-                   D_down: Run},
-            Run: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, D_down: Run, D_up: Move},
+            Idle: {right_down: Move, left_down: Move, up_down: Idle, down_down: Idle, A_down: Attack},
+            Move: {right_down: Move, left_down: Move, right_up: Idle, left_up: Idle, up_down: Move, down_down: Move,
+                   A_down: Attack, D_down: Run},
+            Run: {right_down: Run, left_down: Run, right_up: Idle, left_up: Idle, D_up: Move},
             Attack: {Attack_time: Idle},
         }
 
@@ -225,6 +225,7 @@ class Character:
 
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
+
 
     def draw(self):
         self.state_machine.draw()
