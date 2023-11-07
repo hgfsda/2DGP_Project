@@ -7,7 +7,7 @@ def right_down(e):
 
 
 def right_up(e):
-    return e[0] == 'INPUT_CHECK' and e[1].type == SDL_KEYUP and e[1].key == SDLK_RIGHT
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_RIGHT
 
 
 def left_down(e):
@@ -15,7 +15,7 @@ def left_down(e):
 
 
 def left_up(e):
-    return e[0] == 'INPUT_CHECK' and e[1].type == SDL_KEYUP and e[1].key == SDLK_LEFT
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_LEFT
 
 
 def up_down(e):
@@ -38,8 +38,8 @@ def A_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_a
 
 
-def Attack_time(e):
-    return e[0] == 'TIME_OUT'
+def Change_Idle(e):
+    return e[0] == 'CHANGE_IDLE'
 
 
 PIXEL_PER_METER = (10.0 / 0.3)
@@ -69,7 +69,7 @@ class Attack:
     def do(character):
         character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         if get_time() - character.wait_time > 0.5:
-            character.state_machine.handle_event(('TIME_OUT', 0))
+            character.state_machine.handle_event(('CHANGE_IDLE', 0))
 
     @staticmethod
     def draw(character):
@@ -87,11 +87,14 @@ class Run:
 
     @staticmethod
     def enter(character, e):
-        if right_down(e):
-            character.dir, character.face_dir = 1, 1
-        elif left_down(e):
-            character.dir, character.face_dir = -1, 0
-        pass
+        if right_down(e):  # 오른쪽으로 Move
+            character.dir, character.face_dir, character.right_check = 1, 1, True
+        elif left_down(e):  # 왼쪽으로 Move
+            character.dir, character.face_dir, character.left_check = -1, 0, True
+        if right_up(e):  # 오른쪽으로 Move
+            character.right_check = False
+        elif left_up(e):  # 왼쪽으로 Move
+            character.left_check = False
 
     @staticmethod
     def exit(character, e):
@@ -101,6 +104,8 @@ class Run:
     def do(character):
         character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * 1.5 * game_framework.frame_time) % 5
         character.x += character.dir * RUN_SPEED_PPS * 2.5 * game_framework.frame_time
+        if not character.left_check and not character.right_check:
+            character.state_machine.handle_event(('CHANGE_IDLE', 0))
 
     @staticmethod
     def draw(character):
@@ -112,17 +117,21 @@ class Run:
 
 
 class Move:
-
     @staticmethod
     def enter(character, e):
-        if right_down(e) or left_up(e):  # 오른쪽으로 Move
-            character.dir, character.face_dir = 1, 1
-        elif left_down(e) or right_up(e):  # 왼쪽으로 Move
-            character.dir, character.face_dir = -1, 0
+        if right_down(e):  # 오른쪽으로 Move
+            character.dir, character.face_dir, character.right_check = 1, 1, True
+        elif left_down(e):  # 왼쪽으로 Move
+            character.dir, character.face_dir, character.left_check = -1, 0, True
+        if right_up(e):  # 오른쪽으로 Move
+            character.right_check = False
+        elif left_up(e):  # 왼쪽으로 Move
+            character.left_check = False
         if up_down(e) and character.sword_position < 2:
             character.sword_position += 1
-        if down_down(e) and character.sword_position > 0:
+        elif down_down(e) and character.sword_position > 0:
             character.sword_position -= 1
+
 
 
     @staticmethod
@@ -133,6 +142,9 @@ class Move:
     def do(character):
         character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         character.x += character.dir * RUN_SPEED_PPS * game_framework.frame_time
+        if not character.left_check and not character.right_check:
+            character.state_machine.handle_event(('CHANGE_IDLE', 0))
+
 
 
     @staticmethod
@@ -155,6 +167,8 @@ class Idle:
         if down_down(e) and character.sword_position > 0:
             character.sword_position -= 1
         character.dir = 0
+        character.right_check = False
+        character.left_check = False
 
     @staticmethod
     def exit(character, e):
@@ -182,10 +196,9 @@ class StateMachine:
         self.cur_state = Idle
         self.transitions = {
             Idle: {right_down: Move, left_down: Move, up_down: Idle, down_down: Idle, A_down: Attack},
-            Move: {right_down: Move, left_down: Move, right_up: Idle, left_up: Idle, up_down: Move, down_down: Move,
-                   A_down: Attack, D_down: Run},
-            Run: {right_down: Run, left_down: Run, right_up: Idle, left_up: Idle, D_up: Move},
-            Attack: {Attack_time: Idle},
+            Move: {right_down: Move, left_down: Move, right_up: Move, left_up: Move, up_down: Move, down_down: Move, Change_Idle: Idle, A_down: Attack, D_down: Run},
+            Run: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, Change_Idle: Idle, D_up: Move},
+            Attack: {Change_Idle: Idle},
         }
 
     def start(self):
@@ -215,6 +228,8 @@ class Character:
         self.face_dir = 1  # 캐릭터가 바라보는 방향  / 왼쪽 0, 오른쪽 1
         self.dir = 0
         self.frame = 0
+        self.left_check = False
+        self.right_check = False
         self.image = load_image('character.png')
         self.run_image = load_image('Character_run.png')
         self.state_machine = StateMachine(self)
