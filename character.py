@@ -58,6 +58,7 @@ class Death:
     @staticmethod
     def enter(character, e):
         character.frame = 0
+        character.wait_time = get_time()
         pass
 
     @staticmethod
@@ -72,10 +73,11 @@ class Death:
 
     @staticmethod
     def draw(character):
-        if character.face_dir == 1:
-            character.image.clip_draw(int(character.frame) * 45, 0, 45, 45, character.x, 150, 135, 135)
-        elif character.face_dir == 0:
-            character.image.clip_composite_draw(int(character.frame) * 45, 0, 45, 45, 0, 'h', character.x - 90, 150, 135, 135)
+        if get_time() - character.wait_time < 1.5:
+            if character.face_dir == 1:
+                character.image.clip_draw(int(character.frame) * 45, 0, 45, 45, character.x, 150, 135, 135)
+            elif character.face_dir == 0:
+                character.image.clip_composite_draw(int(character.frame) * 45, 0, 45, 45, 0, 'h', character.x - 90, 150, 135, 135)
 
 
 class Attack:
