@@ -53,6 +53,31 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 5
 
 
+class Death:
+
+    @staticmethod
+    def enter(character, e):
+        character.frame = 0
+        pass
+
+    @staticmethod
+    def exit(character, e):
+        pass
+
+    @staticmethod
+    def do(character):
+        if character.frame < 3:
+            character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
+
+
+    @staticmethod
+    def draw(character):
+        if character.face_dir == 1:
+            character.image.clip_draw(int(character.frame) * 45, 0, 45, 45, character.x, 150, 135, 135)
+        elif character.face_dir == 0:
+            character.image.clip_composite_draw(int(character.frame) * 45, 0, 45, 45, 0, 'h', character.x - 90, 150, 135, 135)
+
+
 class Attack:
 
     @staticmethod
@@ -112,7 +137,7 @@ class Run:
         if character.face_dir == 1:
             character.run_image.clip_draw(int(character.frame) * 45, 0, 45, 45, character.x, 150, 135, 135)
         elif character.face_dir == 0:
-            character.run_image.clip_composite_draw(int(character.frame) * 45, 0, 45, 45, 0, 'h', character.x - 90, 150,
+            character.run_image.clip_composite_draw(int(character.frame) * 45, 0, 45, 45, 0, 'h', character.x - 60, 150,
                                                     135, 135)
 
 
@@ -193,12 +218,13 @@ class Idle:
 class StateMachine:
     def __init__(self, character):
         self.character = character
-        self.cur_state = Idle
+        self.cur_state = Death
         self.transitions = {
             Idle: {right_down: Move, left_down: Move, up_down: Idle, down_down: Idle, A_down: Attack},
             Move: {right_down: Move, left_down: Move, right_up: Move, left_up: Move, up_down: Move, down_down: Move, Change_Idle: Idle, A_down: Attack, D_down: Run},
             Run: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, Change_Idle: Idle, D_up: Move},
             Attack: {Change_Idle: Idle},
+            Death: {},
         }
 
     def start(self):
@@ -241,6 +267,7 @@ class Character:
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
 
-
     def draw(self):
         self.state_machine.draw()
+
+
