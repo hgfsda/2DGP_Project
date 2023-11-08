@@ -78,6 +78,13 @@ class Death:
                 character.image.clip_draw(int(character.frame) * 45, 0, 45, 45, character.x, 150, 135, 135)
             elif character.face_dir == 0:
                 character.image.clip_composite_draw(int(character.frame) * 45, 0, 45, 45, 0, 'h', character.x - 90, 150, 135, 135)
+        if get_time() - character.wait_time > 3:
+            # 3초후 리스폰
+            character.x = 200
+            character.sword_position = 1
+            character.face_dir = 1
+            character.dir = 0
+            character.state_machine.handle_event(('CHANGE_IDLE', 0))
 
 
 class Attack:
@@ -226,7 +233,7 @@ class StateMachine:
             Move: {right_down: Move, left_down: Move, right_up: Move, left_up: Move, up_down: Move, down_down: Move, Change_Idle: Idle, A_down: Attack, D_down: Run},
             Run: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, Change_Idle: Idle, D_up: Move},
             Attack: {Change_Idle: Idle},
-            Death: {},
+            Death: {Change_Idle: Idle},
         }
 
     def start(self):
