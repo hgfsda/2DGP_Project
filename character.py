@@ -227,7 +227,7 @@ class Idle:
 class StateMachine:
     def __init__(self, character):
         self.character = character
-        self.cur_state = Death
+        self.cur_state = Idle
         self.transitions = {
             Idle: {right_down: Move, left_down: Move, up_down: Idle, down_down: Idle, A_down: Attack},
             Move: {right_down: Move, left_down: Move, right_up: Move, left_up: Move, up_down: Move, down_down: Move, Change_Idle: Idle, A_down: Attack, D_down: Run},
@@ -278,5 +278,16 @@ class Character:
 
     def draw(self):
         self.state_machine.draw()
+        draw_rectangle(*self.character_get_bb())
+        draw_rectangle(*self.sword_get_bb())
 
+
+    def character_get_bb(self):
+        return self.x - 70, 150 - 60, self.x - 20, 150 + 10
+
+    def sword_get_bb(self):
+        if self.face_dir == 1:
+            return self.x - 20, 100 + (20 * self.sword_position), self.x + 27, 120 + (20 * self.sword_position)
+        elif self.face_dir == 0:
+            return self.x - 120, 100 + (20 * self.sword_position), self.x - 70, 120 + (20 * self.sword_position)
 
