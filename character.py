@@ -126,11 +126,11 @@ class Attack:
 
     @staticmethod
     def character_get_bb(character):
-        pass
+        return 0, 0, 0, 0
 
     @staticmethod
     def sword_get_bb(character):
-        pass
+        return 0, 0, 0, 0
 
 
 class Run:
@@ -167,11 +167,11 @@ class Run:
 
     @staticmethod
     def character_get_bb(character):
-        pass
+        return character.x - 50, 150 - 70, character.x - 10, 150 + 10
 
     @staticmethod
     def sword_get_bb(character):
-        pass
+        return 0, 0, 0, 0
 
 class Move:
     @staticmethod
