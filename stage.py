@@ -3,7 +3,7 @@ from pico2d import load_image
 
 class Stage:
     def __init__(self):
-        self.stage_image = load_image('stage.png')
+        self.stage_image = load_image('image\\stage.png')
         self.frame = 0
         self.x = 400  # 배경 위치
         self.character_stage = 3  # 주인공 스테이지 위치

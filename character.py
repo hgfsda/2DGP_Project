@@ -312,8 +312,8 @@ class Character:
         self.frame = 0
         self.left_check = False
         self.right_check = False
-        self.image = load_image('character.png')
-        self.run_image = load_image('Character_run.png')
+        self.image = load_image('image\\character.png')
+        self.run_image = load_image('image\\Character_run.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
 

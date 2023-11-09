@@ -11,8 +11,8 @@ def init():
     global frame
     frame = 0
     check_y = 0
-    start_stage_image = load_image('start_stage.png')
-    start_word_image = load_image('start.png')
+    start_stage_image = load_image('image\\start_stage.png')
+    start_word_image = load_image('image\\start.png')
     pass
 
 def finish():
