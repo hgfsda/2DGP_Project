@@ -86,6 +86,14 @@ class Death:
             character.dir = 0
             character.state_machine.handle_event(('CHANGE_IDLE', 0))
 
+    @staticmethod
+    def character_get_bb(character):
+        return 0, 0, 0, 0
+
+    @staticmethod
+    def sword_get_bb(character):
+        return 0, 0, 0, 0
+
 
 class Attack:
 
@@ -115,6 +123,14 @@ class Attack:
             character.image.clip_composite_draw(int(character.frame) * 45, 360 - (135 * character.sword_position), 45,
                                                 45, 0,
                                                 'h', character.x - 90, 150, 135, 135)
+
+    @staticmethod
+    def character_get_bb(character):
+        pass
+
+    @staticmethod
+    def sword_get_bb(character):
+        pass
 
 
 class Run:
@@ -149,6 +165,13 @@ class Run:
             character.run_image.clip_composite_draw(int(character.frame) * 45, 0, 45, 45, 0, 'h', character.x - 60, 150,
                                                     135, 135)
 
+    @staticmethod
+    def character_get_bb(character):
+        pass
+
+    @staticmethod
+    def sword_get_bb(character):
+        pass
 
 class Move:
     @staticmethod
@@ -192,6 +215,17 @@ class Move:
                                                 45, 0,
                                                 'h', character.x - 90, 150, 135, 135)
 
+    @staticmethod
+    def character_get_bb(character):
+        return character.x - 70, 150 - 60, character.x - 20, 150 + 10
+
+    @staticmethod
+    def sword_get_bb(character):
+        if character.face_dir == 1:
+            return character.x - 20, 100 + (20 * character.sword_position), character.x + 27, 120 + (20 * character.sword_position)
+        elif character.face_dir == 0:
+            return character.x - 120, 100 + (20 * character.sword_position), character.x - 70, 120 + (20 * character.sword_position)
+
 
 class Idle:
     @staticmethod
@@ -222,6 +256,17 @@ class Idle:
             character.image.clip_composite_draw(int(character.frame) * 45, 450 - (135 * character.sword_position), 45,
                                                 45, 0,
                                                 'h', character.x - 90, 150, 135, 135)
+
+    @staticmethod
+    def character_get_bb(character):
+        return character.x - 70, 150 - 60, character.x - 20, 150 + 10
+
+    @staticmethod
+    def sword_get_bb(character):
+        if character.face_dir == 1:
+            return character.x - 20, 100 + (20 * character.sword_position), character.x + 27, 120 + (20 * character.sword_position)
+        elif character.face_dir == 0:
+            return character.x - 120, 100 + (20 * character.sword_position), character.x - 70, 120 + (20 * character.sword_position)
 
 
 class StateMachine:
@@ -254,6 +299,8 @@ class StateMachine:
 
     def draw(self):
         self.cur_state.draw(self.character)
+        draw_rectangle(*self.cur_state.character_get_bb(self.character))
+        draw_rectangle(*self.cur_state.sword_get_bb(self.character))
 
 
 class Character:
@@ -278,16 +325,5 @@ class Character:
 
     def draw(self):
         self.state_machine.draw()
-        draw_rectangle(*self.character_get_bb())
-        draw_rectangle(*self.sword_get_bb())
 
-
-    def character_get_bb(self):
-        return self.x - 70, 150 - 60, self.x - 20, 150 + 10
-
-    def sword_get_bb(self):
-        if self.face_dir == 1:
-            return self.x - 20, 100 + (20 * self.sword_position), self.x + 27, 120 + (20 * self.sword_position)
-        elif self.face_dir == 0:
-            return self.x - 120, 100 + (20 * self.sword_position), self.x - 70, 120 + (20 * self.sword_position)
 
