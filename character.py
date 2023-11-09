@@ -126,7 +126,7 @@ class Attack:
 
     @staticmethod
     def character_get_bb(character):
-        return 0, 0, 0, 0
+        return character.x - 70, 150 - 60, character.x - 20, 150 + 10
 
     @staticmethod
     def sword_get_bb(character):
@@ -142,9 +142,9 @@ class Run:
         elif left_down(e):  # 왼쪽으로 Move
             character.dir, character.face_dir, character.left_check = -1, 0, True
         if right_up(e):  # 오른쪽으로 Move
-            character.right_check = False
+            character.dir, character.face_dir, character.right_check = -1, 0, False
         elif left_up(e):  # 왼쪽으로 Move
-            character.left_check = False
+            character.dir, character.face_dir, character.left_check = 1, 1, False
 
     @staticmethod
     def exit(character, e):
@@ -155,6 +155,7 @@ class Run:
         character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * 1.5 * game_framework.frame_time) % 5
         character.x += character.dir * RUN_SPEED_PPS * 2.5 * game_framework.frame_time
         if not character.left_check and not character.right_check:
+            character.face_dir = 0 if character.face_dir == 1 else 1
             character.state_machine.handle_event(('CHANGE_IDLE', 0))
 
     @staticmethod
@@ -181,9 +182,9 @@ class Move:
         elif left_down(e):  # 왼쪽으로 Move
             character.dir, character.face_dir, character.left_check = -1, 0, True
         if right_up(e):  # 오른쪽으로 Move
-            character.right_check = False
+            character.dir, character.face_dir, character.right_check = -1, 0, False
         elif left_up(e):  # 왼쪽으로 Move
-            character.left_check = False
+            character.dir, character.face_dir, character.left_check = 1, 1, False
         if up_down(e) and character.sword_position < 2:
             character.sword_position += 1
         elif down_down(e) and character.sword_position > 0:
@@ -200,6 +201,7 @@ class Move:
         character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         character.x += character.dir * RUN_SPEED_PPS * game_framework.frame_time
         if not character.left_check and not character.right_check:
+            character.face_dir = 0 if character.face_dir == 1 else 1
             character.state_machine.handle_event(('CHANGE_IDLE', 0))
 
 
@@ -234,7 +236,6 @@ class Idle:
             character.sword_position += 1
         if down_down(e) and character.sword_position > 0:
             character.sword_position -= 1
-        character.dir = 0
         character.right_check = False
         character.left_check = False
 
