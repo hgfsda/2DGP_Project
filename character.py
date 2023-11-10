@@ -98,14 +98,14 @@ class Death:
         if character.frame < 3:
             character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
 
-
     @staticmethod
     def draw(character):
         if get_time() - character.wait_time < 1.5:
             if character.face_dir == 1:
                 character.image.clip_draw(int(character.frame) * 45, 0, 45, 45, character.x, 150, 135, 135)
             elif character.face_dir == 0:
-                character.image.clip_composite_draw(int(character.frame) * 45, 0, 45, 45, 0, 'h', character.x - 90, 150, 135, 135)
+                character.image.clip_composite_draw(int(character.frame) * 45, 0, 45, 45, 0, 'h', character.x - 90, 150,
+                                                    135, 135)
         if get_time() - character.wait_time > 3:
             # 3초후 리스폰
             character.x = 200
@@ -154,11 +154,21 @@ class Attack:
 
     @staticmethod
     def character_get_bb(character):
-        return character.x - 70, 150 - 60, character.x - 20, 150 + 10
+        if character.face_dir == 1:
+            return character.x - 70, 150 - 60, character.x - 20 + (int(character.frame) * 10), 150 + 10
+        elif character.face_dir == 0:
+            return character.x - 70 - (int(character.frame) * 10), 150 - 60, character.x - 20, 150 + 10
 
     @staticmethod
     def sword_get_bb(character):
-        return 0, 0, 0, 0
+        if character.face_dir == 1:
+            return character.x - 20 + (int(character.frame) * 10), 100 + (
+                        20 * character.sword_position), character.x + 27 + (int(character.frame) * 10), 120 + (
+                           20 * character.sword_position)
+        elif character.face_dir == 0:
+            return character.x - 120 - (int(character.frame) * 10), 100 + (
+                        20 * character.sword_position), character.x - 70 - (int(character.frame) * 10), 120 + (
+                           20 * character.sword_position)
 
 
 class Run:
@@ -202,6 +212,7 @@ class Run:
     def sword_get_bb(character):
         return 0, 0, 0, 0
 
+
 class Move:
     @staticmethod
     def enter(character, e):
@@ -218,8 +229,6 @@ class Move:
         elif down_down(e) and character.sword_position > 0:
             character.sword_position -= 1
 
-
-
     @staticmethod
     def exit(character, e):
         pass
@@ -231,8 +240,6 @@ class Move:
         if not character.left_check and not character.right_check:
             character.face_dir = 0 if character.face_dir == 1 else 1
             character.state_machine.handle_event(('CHANGE_IDLE', 0))
-
-
 
     @staticmethod
     def draw(character):
@@ -252,9 +259,11 @@ class Move:
     @staticmethod
     def sword_get_bb(character):
         if character.face_dir == 1:
-            return character.x - 20, 100 + (20 * character.sword_position), character.x + 27, 120 + (20 * character.sword_position)
+            return character.x - 20, 100 + (20 * character.sword_position), character.x + 27, 120 + (
+                        20 * character.sword_position)
         elif character.face_dir == 0:
-            return character.x - 120, 100 + (20 * character.sword_position), character.x - 70, 120 + (20 * character.sword_position)
+            return character.x - 120, 100 + (20 * character.sword_position), character.x - 70, 120 + (
+                        20 * character.sword_position)
 
 
 class Idle:
@@ -293,18 +302,21 @@ class Idle:
     @staticmethod
     def sword_get_bb(character):
         if character.face_dir == 1:
-            return character.x - 20, 100 + (20 * character.sword_position), character.x + 27, 120 + (20 * character.sword_position)
+            return character.x - 20, 100 + (20 * character.sword_position), character.x + 27, 120 + (
+                        20 * character.sword_position)
         elif character.face_dir == 0:
-            return character.x - 120, 100 + (20 * character.sword_position), character.x - 70, 120 + (20 * character.sword_position)
+            return character.x - 120, 100 + (20 * character.sword_position), character.x - 70, 120 + (
+                        20 * character.sword_position)
 
 
 class StateMachine:
     def __init__(self, character):
         self.character = character
-        self.cur_state = Win
+        self.cur_state = Idle
         self.transitions = {
             Idle: {right_down: Move, left_down: Move, up_down: Idle, down_down: Idle, A_down: Attack},
-            Move: {right_down: Move, left_down: Move, right_up: Move, left_up: Move, up_down: Move, down_down: Move, Change_Idle: Idle, A_down: Attack, D_down: Run},
+            Move: {right_down: Move, left_down: Move, right_up: Move, left_up: Move, up_down: Move, down_down: Move,
+                   Change_Idle: Idle, A_down: Attack, D_down: Run},
             Run: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, Change_Idle: Idle, D_up: Move},
             Attack: {Change_Idle: Idle},
             Death: {Change_Idle: Idle},
@@ -355,5 +367,3 @@ class Character:
 
     def draw(self):
         self.state_machine.draw()
-
-
