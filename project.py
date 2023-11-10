@@ -1,6 +1,7 @@
 from pico2d import *
 from stage import Stage
 from character import Character
+from ai import Ai
 import game_world
 import game_framework
 
@@ -19,12 +20,16 @@ def handle_events():
 def init():
     global stage
     global character
+    global ai
 
     stage = Stage()
     game_world.add_object(stage, 0)
 
     character = Character()
     game_world.add_object(character, 1)
+
+    ai = Ai()
+    game_world.add_object(ai, 1)
 
 
 def finish():
