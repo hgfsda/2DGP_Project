@@ -69,7 +69,7 @@ class Death:
                 ai.image.clip_draw(int(ai.frame) * 45, 0, 45, 45, ai.x, 150, 135, 135)
             elif ai.face_dir == 0:
                 ai.image.clip_composite_draw(int(ai.frame) * 45, 0, 45, 45, 0, 'h', ai.x - 90, 150,
-                                                    135, 135)
+                                             135, 135)
         if get_time() - ai.wait_time > 3:
             # 3초후 리스폰
             ai.x = 680
@@ -108,13 +108,11 @@ class Attack:
     @staticmethod
     def draw(ai):
         if ai.face_dir == 1:
-            ai.image.clip_draw(int(ai.frame) * 45, 360 - (135 * ai.sword_position), 45, 45,
-                                      ai.x,
-                                      150, 135, 135)
+            ai.image.clip_draw(int(ai.frame) * 45, 360 - (135 * ai.sword_position), 45, 45, ai.x,
+                               150, 135, 135)
         elif ai.face_dir == 0:
-            ai.image.clip_composite_draw(int(ai.frame) * 45, 360 - (135 * ai.sword_position), 45,
-                                                45, 0,
-                                                'h', ai.x - 90, 150, 135, 135)
+            ai.image.clip_composite_draw(int(ai.frame) * 45, 360 - (135 * ai.sword_position), 45, 45, 0,
+                                         'h', ai.x - 90, 150, 135, 135)
 
     @staticmethod
     def ai_get_bb(ai):
@@ -123,13 +121,11 @@ class Attack:
     @staticmethod
     def sword_get_bb(ai):
         if ai.face_dir == 1:
-            return ai.x - 20 + (int(ai.frame) * 10), 100 + (
-                        20 * ai.sword_position), ai.x + 27 + (int(ai.frame) * 10), 120 + (
-                           20 * ai.sword_position)
+            return ai.x - 20, 105 + (
+                    20 * ai.sword_position), ai.x + 27 + (int(ai.frame) * 10), 115 + (20 * ai.sword_position)
         elif ai.face_dir == 0:
-            return ai.x - 120 - (int(ai.frame) * 10), 100 + (
-                        20 * ai.sword_position), ai.x - 70 - (int(ai.frame) * 10), 120 + (
-                           20 * ai.sword_position)
+            return ai.x - 120 - (int(ai.frame) * 10), 105 + (20 * ai.sword_position), ai.x - 70, 115 + (
+                    20 * ai.sword_position)
 
 
 class Run:
@@ -154,7 +150,7 @@ class Run:
             ai.run_image.clip_draw(int(ai.frame) * 45, 0, 45, 45, ai.x, 150, 135, 135)
         elif ai.face_dir == 0:
             ai.run_image.clip_composite_draw(int(ai.frame) * 45, 0, 45, 45, 0, 'h', ai.x - 60, 150,
-                                                    135, 135)
+                                             135, 135)
 
     @staticmethod
     def ai_get_bb(ai):
@@ -183,13 +179,11 @@ class Move:
     @staticmethod
     def draw(ai):
         if ai.face_dir == 1:
-            ai.image.clip_draw(int(ai.frame) * 45, 405 - (135 * ai.sword_position), 45, 45,
-                                      ai.x,
-                                      150, 135, 135)
+            ai.image.clip_draw(int(ai.frame) * 45, 405 - (135 * ai.sword_position), 45, 45, ai.x,
+                               150, 135, 135)
         elif ai.face_dir == 0:
-            ai.image.clip_composite_draw(int(ai.frame) * 45, 405 - (135 * ai.sword_position), 45,
-                                                45, 0,
-                                                'h', ai.x - 90, 150, 135, 135)
+            ai.image.clip_composite_draw(int(ai.frame) * 45, 405 - (135 * ai.sword_position), 45, 45, 0,
+                                         'h', ai.x - 90, 150, 135, 135)
 
     @staticmethod
     def ai_get_bb(ai):
@@ -198,11 +192,11 @@ class Move:
     @staticmethod
     def sword_get_bb(ai):
         if ai.face_dir == 1:
-            return ai.x - 20, 100 + (20 * ai.sword_position), ai.x + 30, 120 + (
-                        20 * ai.sword_position)
+            return ai.x - 20, 105 + (20 * ai.sword_position), ai.x + 30, 115 + (
+                    20 * ai.sword_position)
         elif ai.face_dir == 0:
-            return ai.x - 120, 100 + (20 * ai.sword_position), ai.x - 70, 120 + (
-                        20 * ai.sword_position)
+            return ai.x - 120, 105 + (20 * ai.sword_position), ai.x - 70, 115 + (
+                    20 * ai.sword_position)
 
 
 class Idle:
@@ -222,12 +216,12 @@ class Idle:
     def draw(ai):
         if ai.face_dir == 1:
             ai.image.clip_draw(int(ai.frame) * 45, 450 - (135 * ai.sword_position), 45, 45,
-                                      ai.x,
-                                      150, 135, 135)
+                               ai.x,
+                               150, 135, 135)
         elif ai.face_dir == 0:
             ai.image.clip_composite_draw(int(ai.frame) * 45, 450 - (135 * ai.sword_position), 45,
-                                                45, 0,
-                                                'h', ai.x - 90, 150, 135, 135)
+                                         45, 0,
+                                         'h', ai.x - 90, 150, 135, 135)
 
     @staticmethod
     def ai_get_bb(ai):
@@ -236,11 +230,11 @@ class Idle:
     @staticmethod
     def sword_get_bb(ai):
         if ai.face_dir == 1:
-            return ai.x - 20, 100 + (20 * ai.sword_position), ai.x + 30, 120 + (
-                        20 * ai.sword_position)
+            return ai.x - 20, 105 + (20 * ai.sword_position), ai.x + 30, 115 + (
+                    20 * ai.sword_position)
         elif ai.face_dir == 0:
-            return ai.x - 120, 100 + (20 * ai.sword_position), ai.x - 70, 120 + (
-                        20 * ai.sword_position)
+            return ai.x - 120, 105 + (20 * ai.sword_position), ai.x - 70, 115 + (
+                    20 * ai.sword_position)
 
 
 class StateMachine:
