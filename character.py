@@ -53,6 +53,34 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 5
 
 
+class Win:
+
+    @staticmethod
+    def enter(character, e):
+        character.frame = 0
+        pass
+
+    @staticmethod
+    def exit(character, e):
+        pass
+
+    @staticmethod
+    def do(character):
+        character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+
+    @staticmethod
+    def draw(character):
+        character.image.clip_draw(int(character.frame) * 45, 45, 45, 45, character.x, 150, 135, 135)
+
+    @staticmethod
+    def character_get_bb(character):
+        return 0, 0, 0, 0
+
+    @staticmethod
+    def sword_get_bb(character):
+        return 0, 0, 0, 0
+
+
 class Death:
 
     @staticmethod
@@ -273,13 +301,14 @@ class Idle:
 class StateMachine:
     def __init__(self, character):
         self.character = character
-        self.cur_state = Idle
+        self.cur_state = Win
         self.transitions = {
             Idle: {right_down: Move, left_down: Move, up_down: Idle, down_down: Idle, A_down: Attack},
             Move: {right_down: Move, left_down: Move, right_up: Move, left_up: Move, up_down: Move, down_down: Move, Change_Idle: Idle, A_down: Attack, D_down: Run},
             Run: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, Change_Idle: Idle, D_up: Move},
             Attack: {Change_Idle: Idle},
             Death: {Change_Idle: Idle},
+            Win: {},
         }
 
     def start(self):
