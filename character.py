@@ -154,10 +154,8 @@ class Attack:
 
     @staticmethod
     def character_get_bb(character):
-        if character.face_dir == 1:
-            return character.x - 70, 150 - 60, character.x - 20 + (int(character.frame) * 10), 150 + 10
-        elif character.face_dir == 0:
-            return character.x - 70 - (int(character.frame) * 10), 150 - 60, character.x - 20, 150 + 10
+        return character.x - 70, 150 - 60, character.x - 20, 150 + 10
+
 
     @staticmethod
     def sword_get_bb(character):
@@ -259,7 +257,7 @@ class Move:
     @staticmethod
     def sword_get_bb(character):
         if character.face_dir == 1:
-            return character.x - 20, 100 + (20 * character.sword_position), character.x + 27, 120 + (
+            return character.x - 20, 100 + (20 * character.sword_position), character.x + 30, 120 + (
                         20 * character.sword_position)
         elif character.face_dir == 0:
             return character.x - 120, 100 + (20 * character.sword_position), character.x - 70, 120 + (
@@ -302,7 +300,7 @@ class Idle:
     @staticmethod
     def sword_get_bb(character):
         if character.face_dir == 1:
-            return character.x - 20, 100 + (20 * character.sword_position), character.x + 27, 120 + (
+            return character.x - 20, 100 + (20 * character.sword_position), character.x + 30, 120 + (
                         20 * character.sword_position)
         elif character.face_dir == 0:
             return character.x - 120, 100 + (20 * character.sword_position), character.x - 70, 120 + (
