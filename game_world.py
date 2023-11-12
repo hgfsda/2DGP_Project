@@ -45,8 +45,8 @@ def clear():
 
 
 def collide_sword_body(a, b):
-    la, ba, ra, ta = a.sword_get_bb()
-    lb, bb, rb, tb = b.character_get_bb()
+    la, ba, ra, ta = a.state_machine.cur_state.sword_get_bb(a)
+    lb, bb, rb, tb = b.state_machine.cur_state.character_get_bb(b)
 
     if la > rb: return False
     if ra < lb: return False
@@ -57,8 +57,8 @@ def collide_sword_body(a, b):
 
 
 def collide_sword_sword(a, b):
-    la, ba, ra, ta = a.sword_get_bb()
-    lb, bb, rb, tb = b.sword_get_bb()
+    la, ba, ra, ta = a.state_machine.cur_state.sword_get_bb(a)
+    lb, bb, rb, tb = b.state_machine.cur_state.sword_get_bb(b)
 
     if la > rb: return False
     if ra < lb: return False
@@ -70,7 +70,6 @@ def collide_sword_sword(a, b):
 
 def add_collision_pair(group, a, b):
     if group not in collision_pairs:
-        print(f'New group {group} added.')
         collision_pairs[group] = [ [], [] ]
     if a:
         collision_pairs[group][0].append(a)
@@ -84,8 +83,8 @@ def handle_collisions():
         for a in pairs[0]:
             for b in pairs[1]:
                 if collide_sword_body(a, b):
-                    a.handle_collision(group, b)
-                    b.handle_collision(group, a)
-                elif collide_sword_sword(a, b):
-                    a.handle_collision(group, b)
-                    b.handle_collision(group, a)
+                    a.handle_collision_sword_body(group, b)
+                    b.handle_collision_sword_body(group, a)
+                if collide_sword_sword(a, b):
+                    a.handle_collision_sword_sword(group, b)
+                    b.handle_collision_sword_sword(group, a)

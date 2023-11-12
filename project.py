@@ -31,6 +31,9 @@ def init():
     ai = Ai()
     game_world.add_object(ai, 1)
 
+    game_world.add_collision_pair('character:ai', character, ai)
+    game_world.add_collision_pair('ai:character', ai, character)
+
 
 def finish():
     game_world.clear()
@@ -39,6 +42,7 @@ def finish():
 
 def update():
     game_world.update()
+    game_world.handle_collisions()
 
 
 def draw():

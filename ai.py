@@ -37,7 +37,7 @@ class Win:
         ai.image.clip_draw(int(ai.frame) * 45, 45, 45, 45, ai.x, 150, 135, 135)
 
     @staticmethod
-    def ai_get_bb(ai):
+    def character_get_bb(ai):
         return 0, 0, 0, 0
 
     @staticmethod
@@ -79,7 +79,7 @@ class Death:
             ai.state_machine.handle_event(('CHANGE_IDLE', 0))
 
     @staticmethod
-    def ai_get_bb(ai):
+    def character_get_bb(ai):
         return 0, 0, 0, 0
 
     @staticmethod
@@ -115,7 +115,7 @@ class Attack:
                                          'h', ai.x - 90, 150, 135, 135)
 
     @staticmethod
-    def ai_get_bb(ai):
+    def character_get_bb(ai):
         return ai.x - 70, 150 - 60, ai.x - 20, 150 + 10
 
     @staticmethod
@@ -153,7 +153,7 @@ class Run:
                                              135, 135)
 
     @staticmethod
-    def ai_get_bb(ai):
+    def character_get_bb(ai):
         return ai.x - 50, 150 - 70, ai.x - 10, 150 + 10
 
     @staticmethod
@@ -186,7 +186,7 @@ class Move:
                                          'h', ai.x - 90, 150, 135, 135)
 
     @staticmethod
-    def ai_get_bb(ai):
+    def character_get_bb(ai):
         return ai.x - 70, 150 - 60, ai.x - 20, 150 + 10
 
     @staticmethod
@@ -224,7 +224,7 @@ class Idle:
                                          'h', ai.x - 90, 150, 135, 135)
 
     @staticmethod
-    def ai_get_bb(ai):
+    def character_get_bb(ai):
         return ai.x - 70, 150 - 60, ai.x - 20, 150 + 10
 
     @staticmethod
@@ -268,7 +268,7 @@ class StateMachine:
 
     def draw(self):
         self.cur_state.draw(self.ai)
-        draw_rectangle(*self.cur_state.ai_get_bb(self.ai))
+        draw_rectangle(*self.cur_state.character_get_bb(self.ai))
         draw_rectangle(*self.cur_state.sword_get_bb(self.ai))
 
 
@@ -294,3 +294,10 @@ class Ai:
 
     def draw(self):
         self.state_machine.draw()
+
+    def handle_collision_sword_body(self, group, other):
+        if group == 'character:ai':
+            print('3')
+        pass
+    def handle_collision_sword_sword(self, group, other):
+        pass

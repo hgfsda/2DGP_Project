@@ -364,3 +364,11 @@ class Character:
 
     def draw(self):
         self.state_machine.draw()
+
+    def handle_collision_sword_body(self, group, other):
+        if group == 'ai:character':
+            print('1')
+
+    def handle_collision_sword_sword(self, group, other):
+        if group == 'character:ai':
+            print('2')
