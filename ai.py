@@ -6,6 +6,10 @@ def Change_Idle(e):
     return e[0] == 'CHANGE_IDLE'
 
 
+def Change_Death(e):
+    return e[0] == 'CHANGE_DEATH'
+
+
 PIXEL_PER_METER = (10.0 / 0.3)
 RUN_SPEED_KMPH = 10.0
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
@@ -242,11 +246,11 @@ class StateMachine:
         self.ai = ai
         self.cur_state = Idle
         self.transitions = {
-            Idle: {},
-            Move: {},
-            Run: {},
-            Attack: {},
-            Death: {},
+            Idle: {Change_Death: Death},
+            Move: {Change_Death: Death},
+            Run: {Change_Death: Death},
+            Attack: {Change_Death: Death},
+            Death: {Change_Idle: Idle},
             Win: {},
         }
 
@@ -297,7 +301,7 @@ class Ai:
 
     def handle_collision_sword_body(self, group, other):
         if group == 'character:ai':
-            print('3')
-        pass
+            self.state_machine.handle_event(('CHANGE_DEATH', 0))
+
     def handle_collision_sword_sword(self, group, other):
         pass
