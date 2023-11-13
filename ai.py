@@ -42,11 +42,11 @@ class Win:
 
     @staticmethod
     def character_get_bb(ai):
-        return 0, 0, 0, 0
+        return 0, 1, 0, 1
 
     @staticmethod
     def sword_get_bb(ai):
-        return 0, 0, 0, 0
+        return 0, 1, 0, 1
 
 
 class Death:
@@ -84,11 +84,11 @@ class Death:
 
     @staticmethod
     def character_get_bb(ai):
-        return 0, 0, 0, 0
+        return 0, 1, 0, 1
 
     @staticmethod
     def sword_get_bb(ai):
-        return 0, 0, 0, 0
+        return 0, 1, 0, 1
 
 
 class Attack:
@@ -162,7 +162,7 @@ class Run:
 
     @staticmethod
     def sword_get_bb(ai):
-        return 0, 0, 0, 0
+        return 0, 1, 0, 1
 
 
 class Move:
@@ -304,4 +304,8 @@ class Ai:
             self.state_machine.handle_event(('CHANGE_DEATH', 0))
 
     def handle_collision_sword_sword(self, group, other):
-        pass
+        if self.face_dir == 0:
+            self.x += 2 * RUN_SPEED_PPS * game_framework.frame_time
+        elif self.face_dir == 1:
+            self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time
+

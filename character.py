@@ -375,4 +375,7 @@ class Character:
 
     def handle_collision_sword_sword(self, group, other):
         if group == 'character:ai':
-            print('2')
+            if self.face_dir == 0:
+                self.x += 2 * RUN_SPEED_PPS * game_framework.frame_time
+            elif self.face_dir == 1:
+                self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time
