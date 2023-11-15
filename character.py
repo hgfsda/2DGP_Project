@@ -46,6 +46,10 @@ def Change_Death(e):
     return e[0] == 'CHANGE_DEATH'
 
 
+def Change_Win(e):
+    return e[0] == 'CHANGE_WIN'
+
+
 PIXEL_PER_METER = (10.0 / 0.3)
 RUN_SPEED_KMPH = 10.0
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
@@ -315,11 +319,13 @@ class StateMachine:
         self.character = character
         self.cur_state = Idle
         self.transitions = {
-            Idle: {right_down: Move, left_down: Move, up_down: Idle, down_down: Idle, A_down: Attack, Change_Death: Death},
+            Idle: {right_down: Move, left_down: Move, up_down: Idle, down_down: Idle, A_down: Attack,
+                   Change_Death: Death, Change_Win: Win},
             Move: {right_down: Move, left_down: Move, right_up: Move, left_up: Move, up_down: Move, down_down: Move,
-                   Change_Idle: Idle, A_down: Attack, D_down: Run, Change_Death: Death},
-            Run: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, Change_Idle: Idle, D_up: Move, Change_Death: Death},
-            Attack: {Change_Idle: Idle, Change_Death: Death},
+                   Change_Idle: Idle, A_down: Attack, D_down: Run, Change_Death: Death, Change_Win: Win},
+            Run: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, Change_Idle: Idle, D_up: Move,
+                  Change_Death: Death, Change_Win: Win},
+            Attack: {Change_Idle: Idle, Change_Death: Death, Change_Win: Win},
             Death: {Change_Idle: Idle},
             Win: {},
         }
@@ -329,6 +335,9 @@ class StateMachine:
 
     def update(self):
         self.cur_state.do(self.character)
+        if main_system.character_kill == 15:
+            self.handle_event(('CHANGE_WIN', 0))
+
 
     def handle_event(self, e):
         for check_event, next_state in self.transitions[self.cur_state].items():

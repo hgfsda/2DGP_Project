@@ -11,6 +11,10 @@ def Change_Death(e):
     return e[0] == 'CHANGE_DEATH'
 
 
+def Change_Win(e):
+    return e[0] == 'CHANGE_WIN'
+
+
 PIXEL_PER_METER = (10.0 / 0.3)
 RUN_SPEED_KMPH = 10.0
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
@@ -247,10 +251,10 @@ class StateMachine:
         self.ai = ai
         self.cur_state = Idle
         self.transitions = {
-            Idle: {Change_Death: Death},
-            Move: {Change_Death: Death},
-            Run: {Change_Death: Death},
-            Attack: {Change_Death: Death},
+            Idle: {Change_Death: Death, Change_Win: Win},
+            Move: {Change_Death: Death, Change_Win: Win},
+            Run: {Change_Death: Death, Change_Win: Win},
+            Attack: {Change_Death: Death, Change_Win: Win},
             Death: {Change_Idle: Idle},
             Win: {},
         }
@@ -260,6 +264,8 @@ class StateMachine:
 
     def update(self):
         self.cur_state.do(self.ai)
+        if main_system.ai_kill == 15:
+            self.handle_event(('CHANGE_WIN', 0))
 
     def handle_event(self, e):
         for check_event, next_state in self.transitions[self.cur_state].items():
