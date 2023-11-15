@@ -1,5 +1,6 @@
 from pico2d import *
 from stage import Stage
+from main_system import System
 from character import Character
 from ai import Ai
 import game_world
@@ -22,6 +23,7 @@ def init():
     global stage
     global character
     global ai
+    global system
 
     stage = Stage()
     game_world.add_object(stage, 0)
@@ -31,6 +33,9 @@ def init():
 
     ai = Ai()
     game_world.add_object(ai, 1)
+
+    system = System()
+    game_world.add_object(system, 2)
 
     game_world.add_collision_pair('character:ai', character, ai)
     game_world.add_collision_pair('ai:character', ai, character)
