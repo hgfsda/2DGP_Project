@@ -5,14 +5,19 @@ ai_kill = 0
 
 class System:
     def __init__(self):
+        global character_kill
+        global ai_kill
+
         self.num_image = load_image('image\\Num.png')
         self.set_image = load_image('image\\set_check.png')
-        self.play_time = 90
+        self.play_time = 91
         self.start_time = get_time()
+        character_kill = 0
+        ai_kill = 0
 
     def update(self):
         if self.play_time > 0:
-            self.play_time = 90 - get_time()
+            self.play_time = 91 + self.start_time - get_time()
 
     def draw(self):
         # 타이머
