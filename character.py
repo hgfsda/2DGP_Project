@@ -197,6 +197,7 @@ class Run:
     def do(character):
         character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * 1.5 * game_framework.frame_time) % 5
         character.x += character.dir * RUN_SPEED_PPS * 2.5 * game_framework.frame_time
+        character.x = clamp(70, character.x, 820)
         if not character.left_check and not character.right_check:
             character.face_dir = 0 if character.face_dir == 1 else 1
             character.state_machine.handle_event(('CHANGE_IDLE', 0))
@@ -242,6 +243,7 @@ class Move:
     def do(character):
         character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         character.x += character.dir * RUN_SPEED_PPS * game_framework.frame_time
+        character.x = clamp(70, character.x, 820)
         if not character.left_check and not character.right_check:
             character.face_dir = 0 if character.face_dir == 1 else 1
             character.state_machine.handle_event(('CHANGE_IDLE', 0))

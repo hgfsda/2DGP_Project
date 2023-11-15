@@ -151,6 +151,7 @@ class Run:
     def do(ai):
         ai.frame = (ai.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * 1.5 * game_framework.frame_time) % 5
         ai.x += ai.dir * RUN_SPEED_PPS * 2.5 * game_framework.frame_time
+        ai.x = clamp(70, ai.x, 820)
         pass
 
     @staticmethod
@@ -183,6 +184,7 @@ class Move:
     def do(ai):
         ai.frame = (ai.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ai.x += ai.dir * RUN_SPEED_PPS * game_framework.frame_time
+        ai.x = clamp(70, ai.x, 820)
         pass
 
     @staticmethod
@@ -313,7 +315,8 @@ class Ai:
 
     def handle_collision_sword_sword(self, group, other):
         if self.face_dir == 0:
-            self.x += 2 * RUN_SPEED_PPS * game_framework.frame_time
+            if self.x < 820:
+                self.x += 2 * RUN_SPEED_PPS * game_framework.frame_time
         elif self.face_dir == 1:
             self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time
 
