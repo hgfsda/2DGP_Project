@@ -1,5 +1,7 @@
 from pico2d import load_image, get_time
 
+character_kill = 0
+ai_kill = 0
 
 class System:
     def __init__(self):
@@ -7,8 +9,6 @@ class System:
         self.set_image = load_image('image\\set_check.png')
         self.play_time = 90
         self.start_time = get_time()
-        self.character_kill = 0
-        self.ai_kill = 0
 
     def update(self):
         if self.play_time > 0:
@@ -28,9 +28,9 @@ class System:
         self.set_image.clip_draw(0, 300, 300, 300, 560, 550, 40, 40)
 
         # 주인공 킬 수 확인
-        self.num_image.clip_draw(100 * (self.character_kill % 100 // 10), 0, 100, 100, 270, 500, 30, 30)
-        self.num_image.clip_draw(100 * (self.character_kill % 10), 0, 100, 100, 300, 500, 30, 30)
+        self.num_image.clip_draw(100 * (character_kill % 100 // 10), 0, 100, 100, 270, 500, 30, 30)
+        self.num_image.clip_draw(100 * (character_kill % 10), 0, 100, 100, 300, 500, 30, 30)
 
         # 적 킬 수 확인
-        self.num_image.clip_draw(100 * (self.ai_kill % 100 // 10), 0, 100, 100, 500, 500, 30, 30)
-        self.num_image.clip_draw(100 * (self.ai_kill % 10), 0, 100, 100, 530, 500, 30, 30)
+        self.num_image.clip_draw(100 * (ai_kill % 100 // 10), 0, 100, 100, 500, 500, 30, 30)
+        self.num_image.clip_draw(100 * (ai_kill % 10), 0, 100, 100, 530, 500, 30, 30)

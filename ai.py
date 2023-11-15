@@ -1,5 +1,6 @@
 from pico2d import *
 import game_framework
+import main_system
 
 
 def Change_Idle(e):
@@ -301,6 +302,7 @@ class Ai:
 
     def handle_collision_sword_body(self, group, other):
         if group == 'character:ai':
+            main_system.character_kill += 1
             self.state_machine.handle_event(('CHANGE_DEATH', 0))
 
     def handle_collision_sword_sword(self, group, other):

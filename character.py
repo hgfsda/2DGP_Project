@@ -1,6 +1,6 @@
 from pico2d import *
 import game_framework
-
+import main_system
 
 def right_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_RIGHT
@@ -371,6 +371,7 @@ class Character:
 
     def handle_collision_sword_body(self, group, other):
         if group == 'ai:character':
+            main_system.ai_kill += 1
             self.state_machine.handle_event(('CHANGE_DEATH', 0))
 
     def handle_collision_sword_sword(self, group, other):
