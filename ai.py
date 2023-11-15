@@ -1,6 +1,7 @@
 from pico2d import *
 import game_framework
 import main_system
+import stage
 
 
 def Change_Idle(e):
@@ -268,6 +269,10 @@ class StateMachine:
         self.cur_state.do(self.ai)
         if main_system.ai_kill == 15:
             self.handle_event(('CHANGE_WIN', 0))
+        if self.ai.x < 75 and stage.ai_stage < 5:
+            stage.ai_stage += 1
+            stage.character_stage -= 1
+            self.ai.x = 820
 
     def handle_event(self, e):
         for check_event, next_state in self.transitions[self.cur_state].items():

@@ -1,6 +1,7 @@
 from pico2d import *
 import game_framework
 import main_system
+import stage
 
 def right_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_RIGHT
@@ -339,6 +340,11 @@ class StateMachine:
         self.cur_state.do(self.character)
         if main_system.character_kill == 15:
             self.handle_event(('CHANGE_WIN', 0))
+        if self.character.x > 815 and stage.character_stage < 5:
+            stage.character_stage += 1
+            stage.ai_stage -= 1
+            self.character.x = 70
+
 
 
     def handle_event(self, e):
@@ -390,4 +396,5 @@ class Character:
             if self.face_dir == 0:
                 self.x += 2 * RUN_SPEED_PPS * game_framework.frame_time
             elif self.face_dir == 1:
-                self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time
+                if self.x > 70:
+                    self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time
