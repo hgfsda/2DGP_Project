@@ -20,8 +20,10 @@ def init():
     global character_run_image
     global frame
     global character_x
+    global character_state
     frame = 0
     character_x = 70
+    character_state = 0
     stage_image = load_image('image\\final_stage.png')
     character_image = load_image('image\\character.png')
     character_run_image = load_image('image\\Character_run.png')
@@ -33,14 +35,21 @@ def finish():
 def update():
     global frame
     global character_x
-    frame = (frame + FRAMES_PER_ACTION * ACTION_PER_TIME * 1.5 * game_framework.frame_time) % 5
-    character_x += RUN_SPEED_PPS * 2.5 * game_framework.frame_time
+    global character_state
+    frame = (frame + FRAMES_PER_ACTION * ACTION_PER_TIME * 1.5 * game_framework.frame_time) % 4
+    if character_x < 400:
+        character_x += RUN_SPEED_PPS * 2.5 * game_framework.frame_time
+    else:
+        character_state = 1
     pass
 
 def draw():
     clear_canvas()
     stage_image.clip_draw(0, 0, 1190, 600, 400, 300, 1000, 600)
-    character_run_image.clip_draw(int(frame) * 45, 0, 45, 45, character_x, 150, 135, 135)
+    if character_state == 0:
+        character_run_image.clip_draw(int(frame) * 45, 0, 45, 45, character_x, 150, 135, 135)
+    elif character_state == 1:
+        character_image.clip_draw(int(frame) * 45, 45, 45, 45, character_x, 150, 135, 135)
     update_canvas()
     pass
 
