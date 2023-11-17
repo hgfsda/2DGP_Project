@@ -35,7 +35,7 @@ def init():
     game_world.add_object(ai, 1)
 
     system = System()
-    game_world.add_object(system, 2)
+    game_world.add_object(system, 3)
 
     game_world.add_collision_pair('character:ai', character, ai)
     game_world.add_collision_pair('ai:character', ai, character)
