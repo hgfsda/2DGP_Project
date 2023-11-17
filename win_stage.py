@@ -2,6 +2,7 @@ from pico2d import *
 import main_system
 import game_framework
 import title_mode
+import project
 
 PIXEL_PER_METER = (10.0 / 0.3)
 RUN_SPEED_KMPH = 10.0
@@ -23,11 +24,13 @@ def init():
     global num_image
     global set_image
     global current_time
+    global wait_time
 
     frame = 0
     character_x = 70
     character_state = 0
     current_time = main_system.play_time
+    wait_time = get_time()
     stage_image = load_image('image\\final_stage.png')
     character_image = load_image('image\\character.png')
     character_run_image = load_image('image\\Character_run.png')
@@ -42,14 +45,21 @@ def update():
     global frame
     global character_x
     global character_state
+    global wait_time
+
     if character_x < 400:
         frame = (frame + FRAMES_PER_ACTION * ACTION_PER_TIME * 1.5 * game_framework.frame_time) % 5
         character_x += RUN_SPEED_PPS * 2.5 * game_framework.frame_time
     else:
         frame = (frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         character_state = 1
-    pass
 
+    if get_time() - wait_time > 3.0:
+        if main_system.ch_win_check1 == 0:
+            main_system.ch_win_check1 = 1
+            game_framework.change_mode(project)
+        elif main_system.ch_win_check1 == 1:
+            main_system.ch_win_check2 = 1
 def draw():
     clear_canvas()
     stage_image.clip_draw(0, 0, 1190, 600, 400, 300, 1000, 600)
@@ -63,12 +73,12 @@ def draw():
     num_image.clip_draw(100 * (int)(current_time % 10), 0, 100, 100, 440, 530, 80, 100)
 
     # 주인공 세트 확인
-    set_image.clip_draw(0, 300, 300, 300, 290, 550, 40, 40)
-    set_image.clip_draw(0, 300, 300, 300, 240, 550, 40, 40)
+    set_image.clip_draw(0, 300 - (main_system.ch_win_check1 * 300), 300, 300, 290, 550, 40, 40)
+    set_image.clip_draw(0, 300 - (main_system.ch_win_check2 * 300), 300, 300, 240, 550, 40, 40)
 
     # 적 세트 확인
-    set_image.clip_draw(0, 300, 300, 300, 510, 550, 40, 40)
-    set_image.clip_draw(0, 300, 300, 300, 560, 550, 40, 40)
+    set_image.clip_draw(0, 300 - (main_system.ai_win_check1 * 300), 300, 300, 510, 550, 40, 40)
+    set_image.clip_draw(0, 300 - (main_system.ai_win_check2 * 300), 300, 300, 560, 550, 40, 40)
 
     # 주인공 킬 수 확인
     num_image.clip_draw(100 * (main_system.character_kill % 100 // 10), 0, 100, 100, 270, 500, 30, 30)
