@@ -1,6 +1,7 @@
 from pico2d import *
 import game_framework
 import main_system
+import win_stage
 import stage
 
 def right_down(e):
@@ -344,6 +345,8 @@ class StateMachine:
             stage.character_stage += 1
             stage.ai_stage -= 1
             self.character.x = 70
+        elif self.character.x > 815 and stage.character_stage == 5:
+            game_framework.change_mode(win_stage)
 
 
 
