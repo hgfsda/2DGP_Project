@@ -3,6 +3,7 @@ import main_system
 import game_framework
 import title_mode
 import project
+import result
 
 PIXEL_PER_METER = (10.0 / 0.3)
 RUN_SPEED_KMPH = 10.0
@@ -60,6 +61,7 @@ def update():
             game_framework.change_mode(project)
         elif main_system.ch_win_check1 == 1:
             main_system.ch_win_check2 = 1
+            game_framework.change_mode(result)
 def draw():
     clear_canvas()
     stage_image.clip_draw(0, 0, 1190, 600, 400, 300, 1000, 600)
