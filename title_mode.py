@@ -1,6 +1,7 @@
 from pico2d import *
 
 import game_framework
+import main_system
 import project
 
 
@@ -49,6 +50,7 @@ def handle_events():
             check_y = 1 - check_y
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_RETURN):
             if check_y == 0:
+                main_system.total_ai_kill, main_system.total_ch_kill = 0, 0
                 game_framework.change_mode(project)
             elif check_y == 1:
                 game_framework.quit()
