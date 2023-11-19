@@ -316,6 +316,7 @@ class Ai:
     def handle_collision_sword_body(self, group, other):
         if group == 'character:ai':
             main_system.character_kill += 1
+            main_system.total_ch_kill += 1
             self.state_machine.handle_event(('CHANGE_DEATH', 0))
 
     def handle_collision_sword_sword(self, group, other):

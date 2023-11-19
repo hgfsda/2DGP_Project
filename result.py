@@ -30,6 +30,14 @@ def draw():
 
     word_image.clip_draw(0, 0, 400, 100, 240, 200, 180, 60)
     word_image.clip_draw(400, 0, 500, 100, 560, 200, 180, 60)
+
+    # 주인공 킬 수 확인
+    num_image.clip_draw(100 * (main_system.total_ch_kill % 100 // 10), 0, 100, 100, 215, 130, 40, 40)
+    num_image.clip_draw(100 * (main_system.total_ch_kill % 10), 0, 100, 100, 245, 130, 40, 40)
+
+    # 적 킬 수 확인
+    num_image.clip_draw(100 * (main_system.total_ai_kill % 100 // 10), 0, 100, 100, 555, 130, 40, 40)
+    num_image.clip_draw(100 * (main_system.total_ai_kill % 10), 0, 100, 100, 585, 130, 40, 40)
     update_canvas()
 
 def handle_events():

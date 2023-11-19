@@ -3,8 +3,8 @@ from pico2d import load_image, get_time
 play_time = 91
 character_kill = 0
 ai_kill = 0
-total_ch_kill = 0
-total_ai_kill = 0
+total_ch_kill = 15
+total_ai_kill = 21
 ch_win_check1, ch_win_check2 = 0, 0
 ai_win_check1, ai_win_check2 = 0, 0
 
