@@ -23,10 +23,10 @@ def update():
 def draw():
     clear_canvas()
     background_image.draw(400, 300)
-    # if main_system.ch_win_check2 == 1:
-    word_image.clip_draw(0, 100, 300, 100, 410, 400, 400, 170)
-    # elif main_system.ai_win_check2 == 1:
-    #     word_image.clip_draw(400, 100, 400, 100, 400, 400, 400, 170)
+    if main_system.ch_win_check2 == 1:
+        word_image.clip_draw(0, 100, 300, 100, 410, 400, 400, 170)
+    elif main_system.ai_win_check2 == 1:
+        word_image.clip_draw(400, 100, 400, 100, 400, 400, 400, 170)
 
     word_image.clip_draw(0, 0, 400, 100, 240, 200, 180, 60)
     word_image.clip_draw(400, 0, 500, 100, 560, 200, 180, 60)

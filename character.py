@@ -3,6 +3,8 @@ import game_framework
 import main_system
 import win_stage
 import stage
+import project
+import result
 
 def right_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_RIGHT
@@ -68,6 +70,7 @@ class Win:
     @staticmethod
     def enter(character, e):
         character.frame = 0
+        character.wait_time = get_time()
         pass
 
     @staticmethod
@@ -77,6 +80,13 @@ class Win:
     @staticmethod
     def do(character):
         character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        if get_time() - character.wait_time > 1.5:
+            if main_system.ch_win_check1 == 0:
+                main_system.ch_win_check1 = 1
+                game_framework.change_mode(project)
+            elif main_system.ch_win_check1 == 1:
+                main_system.ch_win_check2 = 1
+                game_framework.change_mode(result)
 
     @staticmethod
     def draw(character):
@@ -111,7 +121,7 @@ class Death:
     @staticmethod
     def draw(character):
         if get_time() - character.wait_time < 1.5:
-            if character.face_dir == 1:
+            if character.face_dir == 15:
                 character.image.clip_draw(int(character.frame) * 45, 0, 45, 45, character.x, 150, 135, 135)
             elif character.face_dir == 0:
                 character.image.clip_composite_draw(int(character.frame) * 45, 0, 45, 45, 0, 'h', character.x - 90, 150,
