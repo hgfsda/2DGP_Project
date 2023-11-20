@@ -120,14 +120,14 @@ class Death:
 
     @staticmethod
     def draw(character):
-        if get_time() - character.wait_time < 1.5:
+        if get_time() - character.wait_time < 0.5:
             if character.face_dir == 15:
                 character.image.clip_draw(int(character.frame) * 45, 0, 45, 45, character.x, 150, 135, 135)
             elif character.face_dir == 0:
                 character.image.clip_composite_draw(int(character.frame) * 45, 0, 45, 45, 0, 'h', character.x - 90, 150,
                                                     135, 135)
-        if get_time() - character.wait_time > 3:
-            # 3초후 리스폰
+        if get_time() - character.wait_time > 2:
+            # 2초후 리스폰
             character.x = 200
             character.sword_position = 1
             character.face_dir = 1

@@ -74,14 +74,14 @@ class Death:
 
     @staticmethod
     def draw(ai):
-        if get_time() - ai.wait_time < 1.5:
+        if get_time() - ai.wait_time < 0.5:
             if ai.face_dir == 1:
                 ai.image.clip_draw(int(ai.frame) * 45, 0, 45, 45, ai.x, 150, 135, 135)
             elif ai.face_dir == 0:
                 ai.image.clip_composite_draw(int(ai.frame) * 45, 0, 45, 45, 0, 'h', ai.x - 90, 150,
                                              135, 135)
-        if get_time() - ai.wait_time > 3:
-            # 3초후 리스폰
+        if get_time() - ai.wait_time > 2:
+            # 2초후 리스폰
             ai.x = 680
             ai.sword_position = 1
             ai.face_dir = 0
