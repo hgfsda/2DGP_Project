@@ -62,6 +62,7 @@ def update():
         elif main_system.ai_win_check1 == 1:
             main_system.ai_win_check2 = 1
             game_framework.change_mode(result)
+
 def draw():
     clear_canvas()
     stage_image.clip_draw(0, 0, 1190, 600, 400, 300, 1000, 600)

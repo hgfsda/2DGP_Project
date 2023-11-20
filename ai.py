@@ -2,6 +2,43 @@ from pico2d import *
 import game_framework
 import main_system
 import stage
+import lose_stage
+
+
+def right_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_RIGHT
+
+
+def right_up(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_RIGHT
+
+
+def left_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_LEFT
+
+
+def left_up(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_LEFT
+
+
+def up_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_UP
+
+
+def down_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_DOWN
+
+
+def D_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_d
+
+
+def D_up(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_d
+
+
+def A_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_a
 
 
 def Change_Idle(e):
@@ -254,10 +291,13 @@ class StateMachine:
         self.ai = ai
         self.cur_state = Idle
         self.transitions = {
-            Idle: {Change_Death: Death, Change_Win: Win},
-            Move: {Change_Death: Death, Change_Win: Win},
-            Run: {Change_Death: Death, Change_Win: Win},
-            Attack: {Change_Death: Death, Change_Win: Win},
+            Idle: {right_down: Move, left_down: Move, up_down: Idle, down_down: Idle, A_down: Attack,
+                   Change_Death: Death, Change_Win: Win},
+            Move: {right_down: Move, left_down: Move, right_up: Move, left_up: Move, up_down: Move, down_down: Move,
+                   Change_Idle: Idle, A_down: Attack, D_down: Run, Change_Death: Death, Change_Win: Win},
+            Run: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, Change_Idle: Idle, D_up: Move,
+                  Change_Death: Death, Change_Win: Win},
+            Attack: {Change_Idle: Idle, Change_Death: Death, Change_Win: Win},
             Death: {Change_Idle: Idle},
             Win: {},
         }
@@ -273,6 +313,8 @@ class StateMachine:
             stage.ai_stage += 1
             stage.character_stage -= 1
             self.ai.x = 820
+        elif self.ai.x < 75 and stage.ai_stage == 5:
+            game_framework.change_mode(lose_stage)
 
     def handle_event(self, e):
         for check_event, next_state in self.transitions[self.cur_state].items():
