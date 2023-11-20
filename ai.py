@@ -3,7 +3,8 @@ import game_framework
 import main_system
 import stage
 import lose_stage
-
+import project
+import result
 
 def right_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_RIGHT
@@ -69,6 +70,7 @@ class Win:
     @staticmethod
     def enter(ai, e):
         ai.frame = 0
+        ai.wait_time = get_time()
         pass
 
     @staticmethod
@@ -78,6 +80,13 @@ class Win:
     @staticmethod
     def do(ai):
         ai.frame = (ai.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        if get_time() - ai.wait_time > 1.5:
+            if main_system.ai_win_check1 == 0:
+                main_system.ai_win_check1 = 1
+                game_framework.change_mode(project)
+            elif main_system.ai_win_check1 == 1:
+                main_system.ai_win_check2 = 1
+                game_framework.change_mode(result)
 
     @staticmethod
     def draw(ai):
