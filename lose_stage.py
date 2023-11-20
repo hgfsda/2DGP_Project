@@ -10,31 +10,31 @@ RUN_SPEED_KMPH = 10.0
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
-# character Action Speed
+# ai Action Speed
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 5
 
 def init():
     global stage_image
-    global character_image
-    global character_run_image
+    global ai_image
+    global ai_run_image
     global frame
-    global character_x
-    global character_state
+    global ai_x
+    global ai_state
     global num_image
     global set_image
     global current_time
     global wait_time
 
     frame = 0
-    character_x = 70
-    character_state = 0
+    ai_x = 820
+    ai_state = 0
     current_time = main_system.play_time
     wait_time = get_time()
     stage_image = load_image('image\\final_stage.png')
-    character_image = load_image('image\\character.png')
-    character_run_image = load_image('image\\Character_run.png')
+    ai_image = load_image('image\\ai.png')
+    ai_run_image = load_image('image\\ai_run.png')
     num_image = load_image('image\\Num.png')
     set_image = load_image('image\\set_check.png')
     pass
@@ -44,31 +44,31 @@ def finish():
 
 def update():
     global frame
-    global character_x
-    global character_state
+    global ai_x
+    global ai_state
     global wait_time
 
-    if character_x < 420:
+    if ai_x > 420:
         frame = (frame + FRAMES_PER_ACTION * ACTION_PER_TIME * 1.5 * game_framework.frame_time) % 5
-        character_x += RUN_SPEED_PPS * 2.5 * game_framework.frame_time
+        ai_x += -1 * RUN_SPEED_PPS * 2.5 * game_framework.frame_time
     else:
         frame = (frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
-        character_state = 1
+        ai_state = 1
 
     if get_time() - wait_time > 3.0:
-        if main_system.ch_win_check1 == 0:
-            main_system.ch_win_check1 = 1
+        if main_system.ai_win_check1 == 0:
+            main_system.ai_win_check1 = 1
             game_framework.change_mode(project)
-        elif main_system.ch_win_check1 == 1:
-            main_system.ch_win_check2 = 1
+        elif main_system.ai_win_check1 == 1:
+            main_system.ai_win_check2 = 1
             game_framework.change_mode(result)
 def draw():
     clear_canvas()
     stage_image.clip_draw(0, 0, 1190, 600, 400, 300, 1000, 600)
-    if character_state == 0:
-        character_run_image.clip_draw(int(frame) * 45, 0, 45, 45, character_x, 150, 135, 135)
-    elif character_state == 1:
-        character_image.clip_draw(int(frame) * 45, 45, 45, 45, character_x, 150, 135, 135)
+    if ai_state == 0:
+        ai_run_image.clip_composite_draw(int(frame) * 45, 0, 45, 45, 0, 'h', ai_x - 60, 150, 135, 135)
+    elif ai_state == 1:
+        ai_image.clip_draw(int(frame) * 45, 45, 45, 45, ai_x, 150, 135, 135)
 
     # 타이머
     num_image.clip_draw(100 * (int)(current_time % 100 // 10), 0, 100, 100, 360, 530, 80, 100)
