@@ -38,6 +38,11 @@ def draw():
     update_canvas()
     pass
 
+def game_start_reset():
+    main_system.total_ai_kill, main_system.total_ch_kill = 0, 0
+    main_system.ch_win_check1, main_system.ch_win_check2 = 0, 0
+    main_system.ai_win_check1, main_system.ai_win_check2 = 0, 0
+
 def handle_events():
     global check_y
     events = get_events()
@@ -50,7 +55,7 @@ def handle_events():
             check_y = 1 - check_y
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_RETURN):
             if check_y == 0:
-                main_system.total_ai_kill, main_system.total_ch_kill = 0, 0
+                game_start_reset()
                 game_framework.change_mode(project)
             elif check_y == 1:
                 game_framework.quit()
