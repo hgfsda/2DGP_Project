@@ -121,7 +121,7 @@ class Death:
     @staticmethod
     def draw(character):
         if get_time() - character.wait_time < 0.5:
-            if character.face_dir == 15:
+            if character.face_dir == 1:
                 character.image.clip_draw(int(character.frame) * 45, 0, 45, 45, character.x, 150, 135, 135)
             elif character.face_dir == 0:
                 character.image.clip_composite_draw(int(character.frame) * 45, 0, 45, 45, 0, 'h', character.x - 90, 150,
@@ -357,6 +357,9 @@ class StateMachine:
             self.character.x = 70
         elif self.character.x > 815 and stage.character_stage == 5:
             game_framework.change_mode(win_stage)
+        if main_system.play_time <= 0:
+            if main_system.character_kill > main_system.ai_kill:
+                self.handle_event(('CHANGE_WIN', 0))
 
 
 

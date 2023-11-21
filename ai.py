@@ -324,6 +324,9 @@ class StateMachine:
             self.ai.x = 820
         elif self.ai.x < 75 and stage.ai_stage == 5:
             game_framework.change_mode(lose_stage)
+        if main_system.play_time <= 0:
+            if main_system.character_kill < main_system.ai_kill:
+                self.handle_event(('CHANGE_WIN', 0))
 
     def handle_event(self, e):
         for check_event, next_state in self.transitions[self.cur_state].items():
