@@ -5,6 +5,7 @@ import stage
 import lose_stage
 import project
 import result
+from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
 
 def right_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_RIGHT

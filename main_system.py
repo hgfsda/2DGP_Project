@@ -24,7 +24,7 @@ class System:
     def update(self):
         global play_time
         if play_time > 0:
-            play_time = 11 + self.start_time - get_time()
+            play_time = 91 + self.start_time - get_time()
 
 
     def draw(self):
