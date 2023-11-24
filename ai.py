@@ -366,7 +366,7 @@ class Ai:
 
     def run_nearby(self):
         _, _, ch_x, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
-        if ch_x + 140 < self.x:
+        if ch_x + 220 < self.x:
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.FAIL
@@ -376,11 +376,26 @@ class Ai:
         self.dir, self.face_dir = -1, 0
         self.state_machine.handle_event(('CHANGE_RUN', 0))
         return BehaviorTree.RUNNING
-        pass
+
+    def move_front_nearby(self):
+        _, _, ch_x, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
+        if ch_x + 220 >= self.x and ch_x + 80 < self.x:
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.FAIL
+
+    def move_to_ch(self):
+        self.dir, self.face_dir = -1, 0
+        self.state_machine.handle_event(('CHANGE_MOVE', 0))
+        return BehaviorTree.RUNNING
 
     def build_behavior_tree(self):
-        c1 = Condition('캐릭터가 멀리있는가?', self.run_nearby)
-        a1 = Action('달리기는 중', self.run_to_wall)
-        root = SEQ_RUN = Sequence('캐릭터가 멀면 달리기', c1, a1)
+        c1 = Condition('ch + 140 < ai', self.run_nearby)
+        a1 = Action('달려가는 중', self.run_to_wall)
+        SEQ_RUN = Sequence('캐릭터가 멀면 달리기', c1, a1)
+
+        c2 = Condition('ch + 80 < ai < ch + 140', self.move_front_nearby)
+        a2 = Action('앞으로 가기', self.move_to_ch)
+        root = SEQ_FRONT_MOVE = Sequence('캐릭터 앞으로 가기', c2, a2)
         self.bt = BehaviorTree(root)
         pass
