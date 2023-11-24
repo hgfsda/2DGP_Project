@@ -94,7 +94,7 @@ class Win:
 
     @staticmethod
     def character_get_bb(character):
-        return 0, 0, 0, 0
+        return -1000, 0, -1000, 0
 
     @staticmethod
     def sword_get_bb(character):
@@ -136,7 +136,7 @@ class Death:
 
     @staticmethod
     def character_get_bb(character):
-        return 0, 0, 0, 0
+        return -1000, 0, -1000, 0
 
     @staticmethod
     def sword_get_bb(character):
@@ -401,6 +401,11 @@ class Character:
 
     def draw(self):
         self.state_machine.draw()
+        draw_rectangle(*self.get_bb())  # 튜플 앞에 *을 쓰면 튜플을 풀어헤쳐서 각각의 인자로 전달
+
+    # fill here
+    def get_bb(self):
+        return self.x - 70, 90, self.x + 150, 160  # 값 4개짜리 튜플 1개
 
     def handle_collision_sword_body(self, group, other):
         if group == 'ai:character':

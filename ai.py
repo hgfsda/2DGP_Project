@@ -302,12 +302,12 @@ class StateMachine:
         if main_system.play_time <= 0:
             if main_system.character_kill < main_system.ai_kill:
                 self.handle_event(('CHANGE_WIN', 0))
-        if get_time() - self.wait_time > 0.5:
-            if self.ai.sword_position > project.character.sword_position:
-                self.ai.sword_position -= 1
-            elif self.ai.sword_position < project.character.sword_position:
-                self.ai.sword_position += 1
-            self.wait_time = get_time()
+        # if get_time() - self.wait_time > 0.5:
+        #     if self.ai.sword_position > project.character.sword_position:
+        #         self.ai.sword_position -= 1
+        #     elif self.ai.sword_position < project.character.sword_position:
+        #         self.ai.sword_position += 1
+        #     self.wait_time = get_time()
 
     def handle_event(self, e):
         for check_event, next_state in self.transitions[self.cur_state].items():
@@ -338,9 +338,11 @@ class Ai:
         self.run_image = load_image('image\\ai_run.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
+        self.build_behavior_tree()
 
     def update(self):
         self.state_machine.update()
+        self.bt.run()
 
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
@@ -361,6 +363,24 @@ class Ai:
         elif self.face_dir == 1:
             self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time
 
+
+    def run_nearby(self):
+        _, _, ch_x, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
+        if ch_x + 140 < self.x:
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.FAIL
+
+
+    def run_to_wall(self):
+        self.dir, self.face_dir = -1, 0
+        self.state_machine.handle_event(('CHANGE_RUN', 0))
+        return BehaviorTree.RUNNING
+        pass
+
     def build_behavior_tree(self):
-        # self.bt = BehaviorTree(root)
+        c1 = Condition('캐릭터가 멀리있는가?', self.run_nearby)
+        a1 = Action('달리기는 중', self.run_to_wall)
+        root = SEQ_RUN = Sequence('캐릭터가 멀면 달리기', c1, a1)
+        self.bt = BehaviorTree(root)
         pass
