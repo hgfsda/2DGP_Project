@@ -273,6 +273,7 @@ class StateMachine:
     def __init__(self, ai):
         self.ai = ai
         self.cur_state = Idle
+        self.wait_time = get_time()
         self.transitions = {
             Idle: {Change_Move: Move, Change_Run: Run, Change_Attack: Attack,
                    Change_Death: Death, Change_Win: Win},
@@ -301,6 +302,12 @@ class StateMachine:
         if main_system.play_time <= 0:
             if main_system.character_kill < main_system.ai_kill:
                 self.handle_event(('CHANGE_WIN', 0))
+        if get_time() - self.wait_time > 0.5:
+            if self.ai.sword_position > project.character.sword_position:
+                self.ai.sword_position -= 1
+            elif self.ai.sword_position < project.character.sword_position:
+                self.ai.sword_position += 1
+            self.wait_time = get_time()
 
     def handle_event(self, e):
         for check_event, next_state in self.transitions[self.cur_state].items():
