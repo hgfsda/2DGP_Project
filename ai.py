@@ -364,7 +364,7 @@ class Ai:
             self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time
 
 
-    def run_nearby(self):
+    def run_range(self):
         _, _, ch_x, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
         if ch_x + 220 < self.x:
             return BehaviorTree.SUCCESS
@@ -377,9 +377,21 @@ class Ai:
         self.state_machine.handle_event(('CHANGE_RUN', 0))
         return BehaviorTree.RUNNING
 
-    def move_front_nearby(self):
+    def move_front_range(self):
         _, _, ch_x, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
-        if ch_x + 220 >= self.x and ch_x + 80 < self.x:
+        if ch_x + 220 >= self.x and ch_x + 150 < self.x:
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.FAIL
+
+    def move_to_ch(self):
+        self.dir, self.face_dir = -1, 0
+        self.state_machine.handle_event(('CHANGE_MOVE', 0))
+        return BehaviorTree.RUNNING
+
+    def move_front_range(self):
+        _, _, ch_x, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
+        if ch_x + 220 >= self.x and ch_x + 150 < self.x:
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.FAIL
@@ -390,11 +402,11 @@ class Ai:
         return BehaviorTree.RUNNING
 
     def build_behavior_tree(self):
-        c1 = Condition('ch + 140 < ai', self.run_nearby)
+        c1 = Condition('ch + 140 < ai', self.run_range)
         a1 = Action('달려가는 중', self.run_to_wall)
         SEQ_run = Sequence('캐릭터가 멀면 달리기', c1, a1)
 
-        c2 = Condition('ch + 80 < ai < ch + 140', self.move_front_nearby)
+        c2 = Condition('ch + 80 < ai < ch + 140', self.move_front_range)
         a2 = Action('앞으로 가기', self.move_to_ch)
         SEQ_front_move = Sequence('캐릭터 앞으로 가기', c2, a2)
         root = SEL_pattern = Selector('패턴', SEQ_run, SEQ_front_move)
