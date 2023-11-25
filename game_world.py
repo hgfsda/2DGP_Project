@@ -42,7 +42,7 @@ def remove_object(o):
 def clear():
     for layer in objects:
         layer.clear()
-
+    collision_pairs.clear()
 
 def collide_sword_body(a, b):
     la, ba, ra, ta = a.state_machine.cur_state.sword_get_bb(a)
