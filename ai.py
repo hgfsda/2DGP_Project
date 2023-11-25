@@ -392,10 +392,11 @@ class Ai:
     def build_behavior_tree(self):
         c1 = Condition('ch + 140 < ai', self.run_nearby)
         a1 = Action('달려가는 중', self.run_to_wall)
-        SEQ_RUN = Sequence('캐릭터가 멀면 달리기', c1, a1)
+        SEQ_run = Sequence('캐릭터가 멀면 달리기', c1, a1)
 
         c2 = Condition('ch + 80 < ai < ch + 140', self.move_front_nearby)
         a2 = Action('앞으로 가기', self.move_to_ch)
-        root = SEQ_FRONT_MOVE = Sequence('캐릭터 앞으로 가기', c2, a2)
+        SEQ_front_move = Sequence('캐릭터 앞으로 가기', c2, a2)
+        root = SEL_pattern = Selector('패턴', SEQ_run, SEQ_front_move)
         self.bt = BehaviorTree(root)
         pass
