@@ -379,7 +379,7 @@ class Ai:
 
     def move_front_range(self):
         _, _, ch_x, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
-        if ch_x + 220 >= self.x and ch_x + 150 < self.x:
+        if ch_x + 220 >= self.x and ch_x + 190 < self.x:
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.FAIL
@@ -389,26 +389,31 @@ class Ai:
         self.state_machine.handle_event(('CHANGE_MOVE', 0))
         return BehaviorTree.RUNNING
 
-    def move_front_range(self):
+    def Idle_range(self):
         _, _, ch_x, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
-        if ch_x + 220 >= self.x and ch_x + 150 < self.x:
+        if ch_x + 190 >= self.x and ch_x + 180 < self.x:
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.FAIL
 
-    def move_to_ch(self):
-        self.dir, self.face_dir = -1, 0
-        self.state_machine.handle_event(('CHANGE_MOVE', 0))
+    def Idle_ai(self):
+        self.face_dir = 0
+        self.state_machine.handle_event(('CHANGE_IDLE', 0))
         return BehaviorTree.RUNNING
 
     def build_behavior_tree(self):
-        c1 = Condition('ch + 140 < ai', self.run_range)
+        c1 = Condition('ch + 220 < ai', self.run_range)
         a1 = Action('달려가는 중', self.run_to_wall)
         SEQ_run = Sequence('캐릭터가 멀면 달리기', c1, a1)
 
-        c2 = Condition('ch + 80 < ai < ch + 140', self.move_front_range)
+        c2 = Condition('ch + 150 < ai < ch + 220', self.move_front_range)
         a2 = Action('앞으로 가기', self.move_to_ch)
         SEQ_front_move = Sequence('캐릭터 앞으로 가기', c2, a2)
-        root = SEL_pattern = Selector('패턴', SEQ_run, SEQ_front_move)
+
+        c3 = Condition('ch + 140 < ai < ch + 150', self.Idle_range)
+        a3 = Action('가만히 있기', self.Idle_ai)
+        SEQ_idle = Sequence('Idle', c3, a3)
+
+        root = SEL_pattern = Selector('패턴', SEQ_run, SEQ_front_move, SEQ_idle)
         self.bt = BehaviorTree(root)
         pass
