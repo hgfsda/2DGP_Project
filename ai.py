@@ -1,3 +1,5 @@
+import random
+
 from pico2d import *
 import game_framework
 import main_system
@@ -37,6 +39,20 @@ RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 5
+
+sword_change_cnt = 0
+def sword_change(ai):
+    if sword_change_cnt == 1:
+        if ai.sword_position < 2:
+            ai.sword_position += 1
+    elif sword_change_cnt == 2:
+        if ai.sword_position > 0:
+            ai.sword_position -= 1
+    elif sword_change_cnt == 3:
+        if ai.sword_position > project.character.sword_position:
+            ai.sword_position -= 1
+        elif ai.sword_position < project.character.sword_position:
+            ai.sword_position += 1
 
 
 class Win:
@@ -195,6 +211,7 @@ class Run:
 class Move:
     @staticmethod
     def enter(ai, e):
+        ai.wait_time = get_time()
         pass
 
     @staticmethod
@@ -203,9 +220,14 @@ class Move:
 
     @staticmethod
     def do(ai):
+        global sword_change_cnt
         ai.frame = (ai.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ai.x += ai.dir * RUN_SPEED_PPS * game_framework.frame_time
         ai.x = clamp(70, ai.x, 820)
+        if get_time() - ai.wait_time > 0.5:
+            sword_change_cnt = random.randint(1,4)
+            sword_change(ai)
+            ai.wait_time = get_time()
         pass
 
     @staticmethod
@@ -234,6 +256,7 @@ class Move:
 class Idle:
     @staticmethod
     def enter(ai, e):
+        ai.wait_time = get_time()
         pass
 
     @staticmethod
@@ -242,7 +265,12 @@ class Idle:
 
     @staticmethod
     def do(ai):
+        global sword_change_cnt
         ai.frame = (ai.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        if get_time() - ai.wait_time > 0.5:
+            sword_change_cnt = random.randint(1,4)
+            sword_change(ai)
+            ai.wait_time = get_time()
 
     @staticmethod
     def draw(ai):
@@ -302,12 +330,6 @@ class StateMachine:
         if main_system.play_time <= 0:
             if main_system.character_kill < main_system.ai_kill:
                 self.handle_event(('CHANGE_WIN', 0))
-        # if get_time() - self.wait_time > 0.5:
-        #     if self.ai.sword_position > project.character.sword_position:
-        #         self.ai.sword_position -= 1
-        #     elif self.ai.sword_position < project.character.sword_position:
-        #         self.ai.sword_position += 1
-        #     self.wait_time = get_time()
 
     def handle_event(self, e):
         for check_event, next_state in self.transitions[self.cur_state].items():
@@ -406,11 +428,11 @@ class Ai:
         a1 = Action('달려가는 중', self.run_to_wall)
         SEQ_run = Sequence('캐릭터가 멀면 달리기', c1, a1)
 
-        c2 = Condition('ch + 150 < ai < ch + 220', self.move_front_range)
+        c2 = Condition('ch + 190 < ai < ch + 220', self.move_front_range)
         a2 = Action('앞으로 가기', self.move_to_ch)
         SEQ_front_move = Sequence('캐릭터 앞으로 가기', c2, a2)
 
-        c3 = Condition('ch + 140 < ai < ch + 150', self.Idle_range)
+        c3 = Condition('ch + 180 < ai < ch + 190', self.Idle_range)
         a3 = Action('가만히 있기', self.Idle_ai)
         SEQ_idle = Sequence('Idle', c3, a3)
 
