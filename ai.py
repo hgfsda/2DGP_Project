@@ -433,6 +433,11 @@ class Ai:
         self.state_machine.handle_event(('CHANGE_RUN', 0))
         return BehaviorTree.RUNNING
 
+    def front_attack(self):
+        self.face_dir = 0
+        self.state_machine.handle_event(('CHANGE_ATTACK', 0))
+        return BehaviorTree.SUCCESS
+
     def build_behavior_tree(self):
         c1 = Condition('ch + 220 < ai', self.run_range)
         a1 = Action('달려가는 중', self.run_to_wall)
@@ -445,7 +450,7 @@ class Ai:
         c3 = Condition('ch + 180 < ai < ch + 190', self.Idle_range)
         a3 = Action('가만히 있기', self.Idle_ai)
 
-        a4 = Action('뒤로 이동', self.run_to_back)
+        a4 = Action('뒤로 이동', self.front_attack)
         SEQ_idle = Sequence('Idle', c3, a4)
 
         root = SEL_pattern = Selector('패턴', SEQ_run, SEQ_front_move, SEQ_idle)
