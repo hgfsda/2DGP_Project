@@ -212,7 +212,6 @@ class Move:
     @staticmethod
     def enter(ai, e):
         ai.wait_time = get_time()
-        pass
 
     @staticmethod
     def exit(ai, e):
@@ -224,11 +223,10 @@ class Move:
         ai.frame = (ai.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ai.x += ai.dir * RUN_SPEED_PPS * game_framework.frame_time
         ai.x = clamp(70, ai.x, 820)
-        if get_time() - ai.wait_time > 0.5:
-            sword_change_cnt = random.randint(1,4)
-            sword_change(ai)
-            ai.wait_time = get_time()
-        pass
+        # if get_time() - ai.wait_time > 0.5:
+        #     sword_change_cnt = random.randint(1,4)
+        #     sword_change(ai)
+        #     ai.wait_time = get_time()
 
     @staticmethod
     def draw(ai):
@@ -257,7 +255,6 @@ class Idle:
     @staticmethod
     def enter(ai, e):
         ai.wait_time = get_time()
-        pass
 
     @staticmethod
     def exit(ai, e):
@@ -267,10 +264,10 @@ class Idle:
     def do(ai):
         global sword_change_cnt
         ai.frame = (ai.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
-        if get_time() - ai.wait_time > 0.5:
-            sword_change_cnt = random.randint(1,4)
-            sword_change(ai)
-            ai.wait_time = get_time()
+        # if get_time() - ai.wait_time > 0.5:
+        #     sword_change_cnt = random.randint(1,4)
+        #     sword_change(ai)
+        #     ai.wait_time = get_time()
 
     @staticmethod
     def draw(ai):
@@ -401,7 +398,7 @@ class Ai:
 
     def move_front_range(self):
         _, _, ch_x, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
-        if ch_x + 220 >= self.x and ch_x + 190 < self.x:
+        if ch_x + 220 >= self.x and ch_x + 150 < self.x:
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.FAIL
@@ -413,7 +410,7 @@ class Ai:
 
     def Idle_range(self):
         _, _, ch_x, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
-        if ch_x + 190 >= self.x and ch_x + 180 < self.x:
+        if ch_x + 150 >= self.x and ch_x < self.x:
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.FAIL
@@ -452,12 +449,15 @@ class Ai:
         a2 = Action('앞으로 가기', self.move_to_ch)
         SEQ_front_move = Sequence('캐릭터 앞으로 가기', c2, a2)
 
-        c3 = Condition('ch + 180 < ai < ch + 190', self.Idle_range)
+        c3 = Condition('ch + 170 < ai < ch + 190', self.Idle_range)
         a3 = Action('가만히 있기', self.Idle_ai)
 
-        a4 = Action('뒤로 이동', self.back_attack)
-        SEQ_idle = Sequence('Idle', c3, a4)
+        a4 = Action('뒤로 이동', self.move_to_back)
+        a5 = Action('앞에 공격', self.front_attack)
+        a6 = Action('뒤로 달리기', self.run_to_back)
+        a7 = Action('뒤에 공격', self.back_attack)
+
+        SEQ_idle = Sequence('Idle', c3, a5)
 
         root = SEL_pattern = Selector('패턴', SEQ_run, SEQ_front_move, SEQ_idle)
         self.bt = BehaviorTree(root)
-        pass
