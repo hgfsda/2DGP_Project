@@ -361,13 +361,17 @@ class Ai:
 
     def update(self):
         self.state_machine.update()
-        self.bt.run()
+        # self.bt.run()
 
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
 
     def draw(self):
         self.state_machine.draw()
+        draw_rectangle(*self.spawnpoint_get_bb())
+
+    def spawnpoint_get_bb(self):
+        return 600, 150 - 60, 670, 150 + 10
 
     def handle_collision_sword_body(self, group, other):
         if group == 'character:ai':
