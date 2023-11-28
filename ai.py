@@ -118,7 +118,7 @@ class Death:
                                              135, 135)
         if get_time() - ai.wait_time > 2:
             # 2초후 리스폰
-            ai.x = 680
+            ai.x = 780
             ai.sword_position = 1
             ai.face_dir = 0
             ai.dir = 0
@@ -346,7 +346,7 @@ class StateMachine:
 
 class Ai:
     def __init__(self):
-        self.x = 680
+        self.x = 780
         self.sword_position = 1  # 검의 위치 / 상단 2 , 중단 1, 하단 0
         self.face_dir = 0  # 캐릭터가 바라보는 방향  / 왼쪽 0, 오른쪽 1
         self.dir = 0
@@ -371,7 +371,7 @@ class Ai:
         draw_rectangle(*self.spawnpoint_get_bb())
 
     def spawnpoint_get_bb(self):
-        return 600, 150 - 60, 670, 150 + 10
+        return 700, 150 - 60, 820, 150 + 10
 
     def handle_collision_sword_body(self, group, other):
         if group == 'character:ai':
