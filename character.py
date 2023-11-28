@@ -128,10 +128,10 @@ class Death:
                                                     135, 135)
         if get_time() - character.wait_time > 2:
             # 2초후 리스폰
-            character.x = 110
-            character.sword_position = 1
-            character.face_dir = 1
-            character.dir = 0
+            if project.ai.x > 170:
+                character.x, character.sword_position, character.face_dir, character.dir = 110, 1, 1, 0
+            else:
+                character.x, character.sword_position, character.face_dir, character.dir = 110, 1, 0, 0
             character.state_machine.handle_event(('CHANGE_IDLE', 0))
 
     @staticmethod
@@ -401,10 +401,6 @@ class Character:
 
     def draw(self):
         self.state_machine.draw()
-        draw_rectangle(*self.spawnpoint_get_bb())
-
-    def spawnpoint_get_bb(self):
-        return 0, 150 - 60, 100, 150 + 10
 
     def handle_collision_sword_body(self, group, other):
         if group == 'ai:character':
@@ -419,3 +415,5 @@ class Character:
             elif self.face_dir == 1:
                 if self.x > 70:
                     self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time
+
+
