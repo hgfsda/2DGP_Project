@@ -434,7 +434,7 @@ class Ai:
         self.state_machine.handle_event(('CHANGE_MOVE', 0))
         return BehaviorTree.RUNNING
 
-    def Idle_range(self):
+    def total_pattern_range(self):
         _, _, ch_x, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
         if ch_x + 150 >= self.x and ch_x < self.x:
             if self.first_in_pattern == False:       # 만약 범위에 처음 들어오면
@@ -444,25 +444,24 @@ class Ai:
         else:
             return BehaviorTree.FAIL
 
-    def Idle_ai(self):
-        self.face_dir = 0
-        self.state_machine.handle_event(('CHANGE_IDLE', 0))
-        return BehaviorTree.RUNNING
-
-    def move_to_back(self):
-        self.dir, self.face_dir = 1, 0
-        self.state_machine.handle_event(('CHANGE_MOVE', 0))
-        return BehaviorTree.RUNNING
+    def total_pattern(self):
+        if self.pattern_check == 0:         # 가만히 있기
+            self.face_dir = 0
+            self.state_machine.handle_event(('CHANGE_IDLE', 0))
+            return BehaviorTree.RUNNING
+        elif self.pattern_check == 1:       # 뒤로 이동
+            self.dir, self.face_dir = 1, 0
+            self.state_machine.handle_event(('CHANGE_MOVE', 0))
+            return BehaviorTree.RUNNING
+        elif self.pattern_check == 2:       # 공격
+            self.face_dir = 0
+            self.state_machine.handle_event(('CHANGE_ATTACK', 0))
+            return BehaviorTree.SUCCESS
 
     def run_to_back(self):
         self.dir, self.face_dir = 1, 1
         self.state_machine.handle_event(('CHANGE_RUN', 0))
         return BehaviorTree.RUNNING
-
-    def front_attack(self):
-        self.face_dir = 0
-        self.state_machine.handle_event(('CHANGE_ATTACK', 0))
-        return BehaviorTree.SUCCESS
 
     def back_attack(self):
         self.face_dir = 1
@@ -478,11 +477,9 @@ class Ai:
         a2 = Action('앞으로 가기', self.move_to_ch)
         SEQ_front_move = Sequence('캐릭터 앞으로 가기', c2, a2)
 
-        c3 = Condition('ch < ai < ch + 150', self.Idle_range)
-        a3 = Action('가만히 있기', self.Idle_ai)
+        c3 = Condition('ch < ai < ch + 150', self.total_pattern_range)
+        a3 = Action('3가지 패턴', self.total_pattern)
 
-        a4 = Action('뒤로 이동', self.move_to_back)
-        a5 = Action('앞에 공격', self.front_attack)
         a6 = Action('뒤로 달리기', self.run_to_back)
         a7 = Action('뒤에 공격', self.back_attack)
 
@@ -491,7 +488,7 @@ class Ai:
         c6 = Condition('ai가 스테이지 절반보다 왼쪽에 있는 경우', self.ai_front_half)
         c7 = Condition('ai가 스테이지 절반보다 오른쪽에 있는 경우', self.ai_behind_half)
 
-        SEQ_idle = Sequence('Idle', c3, a5)
+        SEQ_idle = Sequence('Idle', c3, a3)
 
         root = SEL_basic_pattern = Selector('패턴', SEQ_run, SEQ_front_move, SEQ_idle)
         self.bt = BehaviorTree(root)
