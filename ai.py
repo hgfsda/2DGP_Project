@@ -321,6 +321,7 @@ class StateMachine:
         if self.ai.x < 75 and stage.ai_stage < 5:
             stage.ai_stage += 1
             stage.character_stage -= 1
+            project.character.x, project.character.face_dir = 110, 1
             self.ai.x = 820
         elif self.ai.x < 75 and stage.ai_stage == 5:
             game_framework.change_mode(lose_stage)
@@ -361,7 +362,7 @@ class Ai:
 
     def update(self):
         self.state_machine.update()
-        # self.bt.run()
+        self.bt.run()
 
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))

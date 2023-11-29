@@ -131,7 +131,7 @@ class Death:
             if project.ai.x > 170:
                 character.x, character.sword_position, character.face_dir, character.dir = 110, 1, 1, 0
             else:
-                character.x, character.sword_position, character.face_dir, character.dir = 110, 1, 0, 0
+                character.x, character.sword_position, character.face_dir, character.dir = 390, 1, 0, 0
             character.state_machine.handle_event(('CHANGE_IDLE', 0))
 
     @staticmethod
@@ -354,6 +354,7 @@ class StateMachine:
         if self.character.x > 815 and stage.character_stage < 5:
             stage.character_stage += 1
             stage.ai_stage -= 1
+            project.ai.x, project.ai.face_dir = 780, 0
             self.character.x = 70
         elif self.character.x > 815 and stage.character_stage == 5:
             game_framework.change_mode(win_stage)
