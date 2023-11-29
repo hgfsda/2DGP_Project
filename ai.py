@@ -354,6 +354,8 @@ class Ai:
         self.frame = 0
         self.left_check = False
         self.right_check = False
+        self.pattern_check = 0
+        self.first_in_pattern = False
         self.image = load_image('image\\ai.png')
         self.run_image = load_image('image\\ai_run.png')
         self.state_machine = StateMachine(self)
@@ -362,7 +364,7 @@ class Ai:
 
     def update(self):
         self.state_machine.update()
-        self.bt.run()
+        # self.bt.run()
 
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
@@ -383,6 +385,29 @@ class Ai:
         elif self.face_dir == 1:
             self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time
 
+    def ai_front_character(self):     # ai가 주인공보다 왼쪽에 있는 경우
+        if self.x < project.character.x:
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.FAIL
+
+    def ai_behind_character(self):     # ai가 주인공보다 오른쪽에 있는 경우
+        if self.x >= project.character.x:
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.FAIL
+
+    def ai_front_half(self):     # ai가 절반보다 왼쪽에 있는 경우
+        if self.x <= 440:
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.FAIL
+
+    def ai_behind_half(self):     # ai가 절반보다 오른쪽에 있는 경우
+        if self.x > 440:
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.FAIL
 
     def run_range(self):
         _, _, ch_x, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
