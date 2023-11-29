@@ -364,7 +364,7 @@ class Ai:
 
     def update(self):
         self.state_machine.update()
-        # self.bt.run()
+        self.bt.run()
 
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
@@ -397,13 +397,13 @@ class Ai:
         else:
             return BehaviorTree.FAIL
 
-    def ai_front_half(self):     # ai가 절반보다 왼쪽에 있는 경우
+    def ai_front_half(self):     # ai가 스테이지 절반보다 왼쪽에 있는 경우
         if self.x <= 440:
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.FAIL
 
-    def ai_behind_half(self):     # ai가 절반보다 오른쪽에 있는 경우
+    def ai_behind_half(self):     # ai가 스테이지 절반보다 오른쪽에 있는 경우
         if self.x > 440:
             return BehaviorTree.SUCCESS
         else:
@@ -424,7 +424,7 @@ class Ai:
 
     def move_front_range(self):
         _, _, ch_x, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
-        if ch_x + 220 >= self.x and ch_x + 150 < self.x:
+        if ch_x + 220 >= self.x and ch_x + 150 < self.x and self.first_in_pattern == False:
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.FAIL
@@ -437,6 +437,9 @@ class Ai:
     def Idle_range(self):
         _, _, ch_x, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
         if ch_x + 150 >= self.x and ch_x < self.x:
+            if self.first_in_pattern == False:       # 만약 범위에 처음 들어오면
+                self.first_in_pattern = True         # 처음이 아니라고 표시
+                self.pattern_check = random.randint(0, 3)  # 패턴 3가지 랜덤 행동
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.FAIL
@@ -471,11 +474,11 @@ class Ai:
         a1 = Action('달려가는 중', self.run_to_wall)
         SEQ_run = Sequence('캐릭터가 멀면 달리기', c1, a1)
 
-        c2 = Condition('ch + 190 < ai < ch + 220', self.move_front_range)
+        c2 = Condition('ch + 150 < ai < ch + 220', self.move_front_range)
         a2 = Action('앞으로 가기', self.move_to_ch)
         SEQ_front_move = Sequence('캐릭터 앞으로 가기', c2, a2)
 
-        c3 = Condition('ch + 170 < ai < ch + 190', self.Idle_range)
+        c3 = Condition('ch < ai < ch + 150', self.Idle_range)
         a3 = Action('가만히 있기', self.Idle_ai)
 
         a4 = Action('뒤로 이동', self.move_to_back)
@@ -483,7 +486,12 @@ class Ai:
         a6 = Action('뒤로 달리기', self.run_to_back)
         a7 = Action('뒤에 공격', self.back_attack)
 
+        c4 = Condition('ai가 주인공보다 왼쪽에 있는 경우', self.ai_front_character)
+        c5 = Condition('ai가 주인공보다 오른쪽에 있는 경우', self.ai_behind_character)
+        c6 = Condition('ai가 스테이지 절반보다 왼쪽에 있는 경우', self.ai_front_half)
+        c7 = Condition('ai가 스테이지 절반보다 오른쪽에 있는 경우', self.ai_behind_half)
+
         SEQ_idle = Sequence('Idle', c3, a5)
 
-        root = SEL_pattern = Selector('패턴', SEQ_run, SEQ_front_move, SEQ_idle)
+        root = SEL_basic_pattern = Selector('패턴', SEQ_run, SEQ_front_move, SEQ_idle)
         self.bt = BehaviorTree(root)

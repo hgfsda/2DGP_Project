@@ -363,7 +363,6 @@ class StateMachine:
                 self.handle_event(('CHANGE_WIN', 0))
 
 
-
     def handle_event(self, e):
         for check_event, next_state in self.transitions[self.cur_state].items():
             if check_event(e):
