@@ -97,6 +97,7 @@ class Death:
     def enter(ai, e):
         ai.frame = 0
         ai.wait_time = get_time()
+        ai.first_in_pattern = False
         pass
 
     @staticmethod
@@ -149,7 +150,14 @@ class Attack:
     def do(ai):
         ai.frame = (ai.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         if get_time() - ai.wait_time > 0.5:
-            ai.state_machine.handle_event(('CHANGE_IDLE', 0))
+            ch_x, _, _, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
+            if ch_x == -1000:    # 캐릭터가 죽어있으면
+                ai.first_in_pattern = False
+                ai.state_machine.handle_event(('CHANGE_IDLE', 0))
+            else:
+                ai.face_dir, ai.dir = 0, -1
+                ai.pattern_check = 1
+                ai.state_machine.handle_event(('CHANGE_MOVE', 0))
 
     @staticmethod
     def draw(ai):
@@ -211,7 +219,9 @@ class Run:
 class Move:
     @staticmethod
     def enter(ai, e):
-        ai.wait_time = get_time()
+        ai.sword_time = get_time()
+        if ai.first_in_pattern == True:
+            ai.pattern_time = get_time()
 
     @staticmethod
     def exit(ai, e):
@@ -223,10 +233,13 @@ class Move:
         ai.frame = (ai.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ai.x += ai.dir * RUN_SPEED_PPS * game_framework.frame_time
         ai.x = clamp(70, ai.x, 820)
-        # if get_time() - ai.wait_time > 0.5:
-        #     sword_change_cnt = random.randint(1,4)
-        #     sword_change(ai)
-        #     ai.wait_time = get_time()
+        if get_time() - ai.sword_time > 0.5:
+            sword_change_cnt = random.randint(1,4)
+            sword_change(ai)
+            ai.sword_time = get_time()
+        if ai.first_in_pattern == True:
+            if get_time() - ai.pattern_time > 0.7:
+                ai.first_in_pattern = False
 
     @staticmethod
     def draw(ai):
@@ -254,7 +267,9 @@ class Move:
 class Idle:
     @staticmethod
     def enter(ai, e):
-        ai.wait_time = get_time()
+        ai.sword_time = get_time()
+        if ai.first_in_pattern == True:
+            ai.pattern_time = get_time()
 
     @staticmethod
     def exit(ai, e):
@@ -264,10 +279,13 @@ class Idle:
     def do(ai):
         global sword_change_cnt
         ai.frame = (ai.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
-        # if get_time() - ai.wait_time > 0.5:
-        #     sword_change_cnt = random.randint(1,4)
-        #     sword_change(ai)
-        #     ai.wait_time = get_time()
+        if get_time() - ai.sword_time > 0.5:
+            sword_change_cnt = random.randint(1,4)
+            sword_change(ai)
+            ai.sword_time = get_time()
+        if ai.first_in_pattern == True:
+            if get_time() - ai.pattern_time > 0.5:
+                ai.first_in_pattern = False
 
     @staticmethod
     def draw(ai):
@@ -306,7 +324,7 @@ class StateMachine:
                    Change_Death: Death, Change_Win: Win},
             Run: {Change_Idle: Idle, Change_Move: Move, Change_Attack: Attack,
                    Change_Death: Death, Change_Win: Win},
-            Attack: {Change_Idle: Idle, Change_Death: Death, Change_Win: Win},
+            Attack: {Change_Idle: Idle, Change_Move: Move, Change_Death: Death, Change_Win: Win},
             Death: {Change_Idle: Idle},
             Win: {},
         }
@@ -352,10 +370,9 @@ class Ai:
         self.face_dir = 0  # 캐릭터가 바라보는 방향  / 왼쪽 0, 오른쪽 1
         self.dir = 0
         self.frame = 0
-        self.left_check = False
-        self.right_check = False
         self.pattern_check = 0
         self.first_in_pattern = False
+        self.pattern_time = 0
         self.image = load_image('image\\ai.png')
         self.run_image = load_image('image\\ai_run.png')
         self.state_machine = StateMachine(self)
@@ -374,9 +391,9 @@ class Ai:
 
     def handle_collision_sword_body(self, group, other):
         if group == 'character:ai':
+            self.state_machine.handle_event(('CHANGE_DEATH', 0))
             main_system.character_kill += 1
             main_system.total_ch_kill += 1
-            self.state_machine.handle_event(('CHANGE_DEATH', 0))
 
     def handle_collision_sword_sword(self, group, other):
         if self.face_dir == 0:
@@ -385,33 +402,25 @@ class Ai:
         elif self.face_dir == 1:
             self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time
 
-    def ai_front_character(self):     # ai가 주인공보다 왼쪽에 있는 경우
-        if self.x < project.character.x:
-            return BehaviorTree.SUCCESS
-        else:
-            return BehaviorTree.FAIL
-
     def ai_behind_character(self):     # ai가 주인공보다 오른쪽에 있는 경우
-        if self.x >= project.character.x:
+        ai_x, _, _, _ = self.state_machine.cur_state.character_get_bb(self)
+        _, _, ch_x, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
+        if ai_x >= ch_x:
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.FAIL
 
-    def ai_front_half(self):     # ai가 스테이지 절반보다 왼쪽에 있는 경우
-        if self.x <= 440:
-            return BehaviorTree.SUCCESS
-        else:
-            return BehaviorTree.FAIL
-
-    def ai_behind_half(self):     # ai가 스테이지 절반보다 오른쪽에 있는 경우
-        if self.x > 440:
+    def ai_front_character(self):     # ai가 주인공보다 왼쪽에 있는 경우
+        _, _, ai_x, _ = self.state_machine.cur_state.character_get_bb(self)
+        ch_x, _, _, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
+        if ai_x < ch_x:
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.FAIL
 
     def run_range(self):
         _, _, ch_x, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
-        if ch_x + 220 < self.x:
+        if ch_x + 220 < self.x :
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.FAIL
@@ -436,7 +445,7 @@ class Ai:
 
     def total_pattern_range(self):
         _, _, ch_x, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
-        if ch_x + 150 >= self.x and ch_x < self.x:
+        if ch_x + 150 >= self.x and ch_x < self.x + 70:
             if self.first_in_pattern == False:       # 만약 범위에 처음 들어오면
                 self.first_in_pattern = True         # 처음이 아니라고 표시
                 self.pattern_check = random.randint(0, 3)  # 패턴 3가지 랜덤 행동
@@ -445,33 +454,23 @@ class Ai:
             return BehaviorTree.FAIL
 
     def total_pattern(self):
-        if self.pattern_check == 0:         # 가만히 있기
+        if self.pattern_check == 0 and self.state_machine.cur_state != Death:         # 가만히 있기
             self.face_dir = 0
             self.state_machine.handle_event(('CHANGE_IDLE', 0))
             return BehaviorTree.RUNNING
-        elif self.pattern_check == 1:       # 뒤로 이동
+        elif self.pattern_check == 1 and self.state_machine.cur_state != Death:       # 뒤로 이동
             self.dir, self.face_dir = 1, 0
             self.state_machine.handle_event(('CHANGE_MOVE', 0))
             return BehaviorTree.RUNNING
-        elif self.pattern_check == 2:       # 공격
+        elif self.pattern_check == 2 and self.state_machine.cur_state != Death:       # 공격
             self.face_dir = 0
             self.state_machine.handle_event(('CHANGE_ATTACK', 0))
             return BehaviorTree.SUCCESS
 
-    def run_to_back(self):
-        self.dir, self.face_dir = 1, 1
-        self.state_machine.handle_event(('CHANGE_RUN', 0))
-        return BehaviorTree.RUNNING
-
-    def back_attack(self):
-        self.face_dir = 1
-        self.state_machine.handle_event(('CHANGE_ATTACK', 0))
-        return BehaviorTree.SUCCESS
-
     def build_behavior_tree(self):
         c1 = Condition('ch + 220 < ai', self.run_range)
         a1 = Action('달려가는 중', self.run_to_wall)
-        SEQ_run = Sequence('캐릭터가 멀면 달리기', c1, a1)
+        SEQ_front_run = Sequence('캐릭터가 멀면 달리기', c1, a1)
 
         c2 = Condition('ch + 150 < ai < ch + 220', self.move_front_range)
         a2 = Action('앞으로 가기', self.move_to_ch)
@@ -479,16 +478,16 @@ class Ai:
 
         c3 = Condition('ch < ai < ch + 150', self.total_pattern_range)
         a3 = Action('3가지 패턴', self.total_pattern)
+        SEQ_three_pattern = Sequence('Idle', c3, a3)
+        SEL_basic_pattern = Selector('패턴', SEQ_front_run, SEQ_front_move, SEQ_three_pattern)
 
-        a6 = Action('뒤로 달리기', self.run_to_back)
-        a7 = Action('뒤에 공격', self.back_attack)
-
-        c4 = Condition('ai가 주인공보다 왼쪽에 있는 경우', self.ai_front_character)
+        c4 = Condition('ai가 왼쪽에 있는 경우', self.ai_front_character)
         c5 = Condition('ai가 주인공보다 오른쪽에 있는 경우', self.ai_behind_character)
-        c6 = Condition('ai가 스테이지 절반보다 왼쪽에 있는 경우', self.ai_front_half)
-        c7 = Condition('ai가 스테이지 절반보다 오른쪽에 있는 경우', self.ai_behind_half)
 
-        SEQ_idle = Sequence('Idle', c3, a3)
+        SEQ_ai_front = Sequence('ai가 캐릭터 왼쪽에 존재', c4, a1)
 
-        root = SEL_basic_pattern = Selector('패턴', SEQ_run, SEQ_front_move, SEQ_idle)
+        SEQ_ai_back = Sequence('ai 오른쪽에 캐릭터 존재', c5, SEL_basic_pattern)
+
+        root = SEL_main = Selector('main', SEQ_ai_back, SEQ_ai_front)
+
         self.bt = BehaviorTree(root)
