@@ -9,10 +9,15 @@ def init():
     global word_image
     global num_image
     global background_image
+    global result_bgm
 
     word_image = load_image('image\\end_word.png')
     num_image = load_image('image\\Num.png')
     background_image = load_image('image\\black_background.png')
+
+    result_bgm = load_music('sound\\result_bgm.mp3')
+    result_bgm.set_volume(8)
+    result_bgm.repeat_play()
 
 def finish():
     pass
@@ -42,13 +47,16 @@ def draw():
 
 def handle_events():
     global check_y
+    global result_bgm
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
+            result_bgm.stop()
             game_framework.change_mode(title_mode)
         elif event.type == SDL_KEYDOWN and event.key == SDLK_RETURN:
+            result_bgm.stop()
             game_framework.change_mode(title_mode)
 
 
