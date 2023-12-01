@@ -99,7 +99,7 @@ class Death:
         ai.frame = 0
         ai.wait_time = get_time()
         ai.first_in_pattern = False
-        pass
+        project.death_sound.play()
 
     @staticmethod
     def exit(ai, e):

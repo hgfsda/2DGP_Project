@@ -25,6 +25,7 @@ def init():
     global ai
     global system
     global sword_sound
+    global death_sound
 
     stage = Stage()
     game_world.add_object(stage, 0)
@@ -43,6 +44,8 @@ def init():
 
     sword_sound = load_wav('sound\\sword.wav')
     sword_sound.set_volume(22)
+    death_sound = load_wav('sound\\death_sound.wav')
+    death_sound.set_volume(22)
 
 
 def finish():

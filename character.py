@@ -72,7 +72,6 @@ class Win:
         character.frame = 0
         character.wait_time = get_time()
         main_system.win_move_check = 1
-        pass
 
     @staticmethod
     def exit(character, e):
@@ -108,7 +107,7 @@ class Death:
     def enter(character, e):
         character.frame = 0
         character.wait_time = get_time()
-        pass
+        project.death_sound.play()
 
     @staticmethod
     def exit(character, e):
