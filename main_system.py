@@ -29,7 +29,6 @@ class System:
         if play_time > 0:
             play_time = 91 + self.start_time - get_time()
 
-
     def draw(self):
         # 타이머
         self.num_image.clip_draw(100 * (int)(play_time % 100 // 10), 0, 100, 100, 360, 530, 80, 100)

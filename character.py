@@ -381,9 +381,9 @@ class StateMachine:
 
 
 class Character:
-    def __init__(self, x = 0, face_dir = 0, dir = 0, sword_position = 0):
+    def __init__(self, x=0, face_dir=0, dir=0, sword_position=0):
         self.x, self.face_dir = x, face_dir  # 캐릭터가 바라보는 방향  / 왼쪽 0, 오른쪽 1
-        self.dir, self.sword_position = dir, sword_position    # 검의 위치 / 상단 2 , 중단 1, 하단 0
+        self.dir, self.sword_position = dir, sword_position  # 검의 위치 / 상단 2 , 중단 1, 하단 0
         self.frame = 0
         self.left_check = False
         self.right_check = False

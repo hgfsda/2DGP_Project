@@ -11,7 +11,7 @@ def init():
     global title_bgm
     global choose_menu
     global confirmed_menu
-    global check_y                # 시작 화면에서 start exit 표시해주는 화살표 위치
+    global check_y  # 시작 화면에서 start exit 표시해주는 화살표 위치
     global frame
     frame = 0
     check_y = 0
@@ -25,8 +25,10 @@ def init():
     choose_menu.set_volume(22)
     confirmed_menu.set_volume(13)
 
+
 def finish():
     pass
+
 
 def update():
     global frame
@@ -35,6 +37,7 @@ def update():
     if frame <= -1300:
         frame = -100
     delay(0.03)
+
 
 def draw():
     clear_canvas()
@@ -45,10 +48,12 @@ def draw():
     start_word_image.clip_draw(200, 10, 30, 60, 165, 260 - (110 * check_y), 60, 120)  # 화살표 위치
     update_canvas()
 
+
 def game_start_reset():
     main_system.total_ai_kill, main_system.total_ch_kill = 0, 0
     main_system.ch_win_check1, main_system.ch_win_check2 = 0, 0
     main_system.ai_win_check1, main_system.ai_win_check2 = 0, 0
+
 
 def handle_events():
     global check_y

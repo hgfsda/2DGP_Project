@@ -3,6 +3,7 @@ from pico2d import load_image, load_music
 character_stage = 3  # 주인공 스테이지 위치
 ai_stage = 3  # ai 스테이지 위치      / 스테이지 위치는 |주인공 - ai| / 2로 계산
 
+
 class Stage:
     def __init__(self):
         global character_stage

@@ -26,15 +26,23 @@ def init():
     global system
     global sword_sound
     global death_sound
+    global ai_data_list
+    global character_data_list
 
     stage = Stage()
     game_world.add_object(stage, 0)
 
-    character = Character()
-    game_world.add_object(character, 1)
+    with open('gamedata\\character_data.json', 'r') as f:  # 파일을 오픈해서 f에 연결
+        character_data_list = json.load(f)
+        character = Character()
+        character.__dict__.update(character_data_list[0])
+        game_world.add_object(character, 1)
 
-    ai = Ai()
-    game_world.add_object(ai, 1)
+    with open('gamedata\\ai_data.json', 'r') as f:  # 파일을 오픈해서 f에 연결
+        ai_data_list = json.load(f)
+        ai = Ai()
+        ai.__dict__.update(ai_data_list[0])
+        game_world.add_object(ai, 1)
 
     system = System()
     game_world.add_object(system, 3)

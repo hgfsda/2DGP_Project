@@ -15,6 +15,7 @@ TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 5
 
+
 def init():
     global stage_image
     global character_image
@@ -47,6 +48,7 @@ def init():
 def finish():
     pass
 
+
 def update():
     global frame
     global character_x
@@ -69,6 +71,7 @@ def update():
         elif main_system.ch_win_check1 == 1:
             main_system.ch_win_check2 = 1
             game_framework.change_mode(result)
+
 
 def draw():
     clear_canvas()
@@ -98,7 +101,7 @@ def draw():
     num_image.clip_draw(100 * (main_system.ai_kill % 100 // 10), 0, 100, 100, 500, 500, 30, 30)
     num_image.clip_draw(100 * (main_system.ai_kill % 10), 0, 100, 100, 530, 500, 30, 30)
     update_canvas()
-    pass
+
 
 def handle_events():
     global victory_bgm

@@ -19,11 +19,14 @@ def init():
     result_bgm.set_volume(8)
     result_bgm.repeat_play()
 
+
 def finish():
     pass
 
+
 def update():
     pass
+
 
 def draw():
     clear_canvas()
@@ -44,6 +47,7 @@ def draw():
     num_image.clip_draw(100 * (main_system.total_ai_kill % 100 // 10), 0, 100, 100, 550, 130, 40, 40)
     num_image.clip_draw(100 * (main_system.total_ai_kill % 10), 0, 100, 100, 590, 130, 40, 40)
     update_canvas()
+
 
 def handle_events():
     global check_y
