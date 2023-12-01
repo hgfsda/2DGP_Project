@@ -8,12 +8,16 @@ import project
 def init():
     global start_stage_image
     global start_word_image
+    global title_bgm
     global check_y                # 시작 화면에서 start exit 표시해주는 화살표 위치
     global frame
     frame = 0
     check_y = 0
     start_stage_image = load_image('image\\start_stage.png')
     start_word_image = load_image('image\\start.png')
+    title_bgm = load_music('sound\\title.mp3')
+    title_bgm.set_volume(22)
+    title_bgm.repeat_play()
     pass
 
 def finish():
@@ -45,6 +49,7 @@ def game_start_reset():
 
 def handle_events():
     global check_y
+    global title_bgm
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -56,6 +61,7 @@ def handle_events():
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_RETURN):
             if check_y == 0:
                 game_start_reset()
+                title_bgm.stop()
                 game_framework.change_mode(project)
             elif check_y == 1:
                 game_framework.quit()
