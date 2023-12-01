@@ -7,19 +7,22 @@ total_ch_kill = 0
 total_ai_kill = 0
 ch_win_check1, ch_win_check2 = 0, 0
 ai_win_check1, ai_win_check2 = 0, 0
+win_move_check = 0  # 0. 경기 상태 / 1. 주인공 승 / 2. ai 승
+
 
 class System:
     def __init__(self):
         global character_kill
         global ai_kill
         global play_time
+        global win_move_check
 
         self.num_image = load_image('image\\Num.png')
         self.set_image = load_image('image\\set_check.png')
         self.start_time = get_time()
-        character_kill = 0
-        ai_kill = 0
+        character_kill, ai_kill = 0, 0
         play_time = 91
+        win_move_check = 0
 
     def update(self):
         global play_time
