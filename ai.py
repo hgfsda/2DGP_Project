@@ -343,6 +343,7 @@ class StateMachine:
             project.character.x, project.character.face_dir = 110, 1
             self.ai.x = 820
         elif self.ai.x < 75 and stage.ai_stage == 5:
+            project.stage.bgm.stop()
             game_framework.change_mode(lose_stage)
         if main_system.play_time <= 0:
             if main_system.character_kill < main_system.ai_kill:

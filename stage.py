@@ -1,4 +1,4 @@
-from pico2d import load_image
+from pico2d import load_image, load_music
 
 character_stage = 3  # 주인공 스테이지 위치
 ai_stage = 3  # ai 스테이지 위치      / 스테이지 위치는 |주인공 - ai| / 2로 계산
@@ -12,6 +12,9 @@ class Stage:
         self.x = 400  # 배경 위치
         character_stage = 3
         ai_stage = 3
+        self.bgm = load_music('sound\\background.mp3')
+        self.bgm.set_volume(5)
+        self.bgm.repeat_play()
 
     def update(self):
         pass
