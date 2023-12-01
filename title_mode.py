@@ -18,12 +18,12 @@ def init():
     start_stage_image = load_image('image\\start_stage.png')
     start_word_image = load_image('image\\start.png')
     title_bgm = load_music('sound\\title.mp3')
-    title_bgm.set_volume(12)
+    title_bgm.set_volume(8)
     title_bgm.repeat_play()
     choose_menu = load_wav('sound\\choose_menu.wav')
     confirmed_menu = load_wav('sound\\confirmed_menu.wav')
     choose_menu.set_volume(22)
-    confirmed_menu.set_volume(22)
+    confirmed_menu.set_volume(13)
 
 def finish():
     pass
@@ -66,6 +66,7 @@ def handle_events():
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_RETURN):
             if check_y == 0:
                 game_start_reset()
+                confirmed_menu.play()
                 title_bgm.stop()
                 game_framework.change_mode(project)
             elif check_y == 1:
