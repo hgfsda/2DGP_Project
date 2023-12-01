@@ -26,6 +26,7 @@ def init():
     global set_image
     global current_time
     global wait_time
+    global victory_bgm
 
     frame = 0
     character_x = 70
@@ -37,7 +38,11 @@ def init():
     character_run_image = load_image('image\\Character_run.png')
     num_image = load_image('image\\Num.png')
     set_image = load_image('image\\set_check.png')
-    pass
+
+    victory_bgm = load_music('sound\\victory.mp3')
+    victory_bgm.set_volume(8)
+    victory_bgm.repeat_play()
+
 
 def finish():
     pass
@@ -47,6 +52,7 @@ def update():
     global character_x
     global character_state
     global wait_time
+    global victory_bgm
 
     if character_x < 420:
         frame = (frame + FRAMES_PER_ACTION * ACTION_PER_TIME * 1.5 * game_framework.frame_time) % 5
@@ -56,12 +62,14 @@ def update():
         character_state = 1
 
     if get_time() - wait_time > 3.0:
+        victory_bgm.stop()
         if main_system.ch_win_check1 == 0:
             main_system.ch_win_check1 = 1
             game_framework.change_mode(project)
         elif main_system.ch_win_check1 == 1:
             main_system.ch_win_check2 = 1
             game_framework.change_mode(result)
+
 def draw():
     clear_canvas()
     stage_image.clip_draw(0, 0, 1190, 600, 400, 300, 1000, 600)
@@ -93,11 +101,13 @@ def draw():
     pass
 
 def handle_events():
+    global victory_bgm
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
+            victory_bgm.stop()
             game_framework.change_mode(title_mode)
 
 
