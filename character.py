@@ -6,6 +6,7 @@ import stage
 import project
 import result
 
+
 def right_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_RIGHT
 
@@ -129,9 +130,9 @@ class Death:
         if get_time() - character.wait_time > 2:
             # 2초후 리스폰
             if project.ai.x > 170:
-                character.x, character.sword_position, character.face_dir, character.dir = 110, 1, 1, 0
+                character.__dict__.update(project.character_data_list[0])
             else:
-                character.x, character.sword_position, character.face_dir, character.dir = 390, 1, 0, 0
+                character.__dict__.update(project.character_data_list[1])
             character.state_machine.handle_event(('CHANGE_IDLE', 0))
 
     @staticmethod
@@ -365,7 +366,6 @@ class StateMachine:
         if main_system.win_move_check == 2:
             self.handle_event(('CHANGE_IDLE', 0))
 
-
     def handle_event(self, e):
         for check_event, next_state in self.transitions[self.cur_state].items():
             if check_event(e):
@@ -378,16 +378,12 @@ class StateMachine:
 
     def draw(self):
         self.cur_state.draw(self.character)
-        draw_rectangle(*self.cur_state.character_get_bb(self.character))
-        draw_rectangle(*self.cur_state.sword_get_bb(self.character))
 
 
 class Character:
-    def __init__(self):
-        self.x = 110
-        self.sword_position = 1  # 검의 위치 / 상단 2 , 중단 1, 하단 0
-        self.face_dir = 1  # 캐릭터가 바라보는 방향  / 왼쪽 0, 오른쪽 1
-        self.dir = 0
+    def __init__(self, x = 0, face_dir = 0, dir = 0, sword_position = 0):
+        self.x, self.face_dir = x, face_dir  # 캐릭터가 바라보는 방향  / 왼쪽 0, 오른쪽 1
+        self.dir, self.sword_position = dir, sword_position    # 검의 위치 / 상단 2 , 중단 1, 하단 0
         self.frame = 0
         self.left_check = False
         self.right_check = False
@@ -419,5 +415,3 @@ class Character:
             elif self.face_dir == 1:
                 if self.x > 70:
                     self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time
-
-

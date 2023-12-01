@@ -13,14 +13,18 @@ from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
 def Change_Idle(e):
     return e[0] == 'CHANGE_IDLE'
 
+
 def Change_Attack(e):
     return e[0] == 'CHANGE_ATTACK'
+
 
 def Change_Run(e):
     return e[0] == 'CHANGE_RUN'
 
+
 def Change_Move(e):
     return e[0] == 'CHANGE_MOVE'
+
 
 def Change_Death(e):
     return e[0] == 'CHANGE_DEATH'
@@ -41,6 +45,8 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 5
 
 sword_change_cnt = 0
+
+
 def sword_change(ai):
     if sword_change_cnt == 1:
         if ai.sword_position < 2:
@@ -62,7 +68,6 @@ class Win:
         ai.frame = 0
         ai.wait_time = get_time()
         main_system.win_move_check = 2
-        pass
 
     @staticmethod
     def exit(ai, e):
@@ -120,10 +125,10 @@ class Death:
                                              135, 135)
         if get_time() - ai.wait_time > 2:
             # 2초후 리스폰
-            if(project.character.x < 630):
-                ai.x, ai.sword_position, ai.face_dir, ai.dir = 780, 1, 0, 0
+            if (project.character.x < 630):
+                ai.__dict__.update(project.ai_data_list[0])
             else:
-                ai.x, ai.sword_position, ai.face_dir, ai.dir = 500, 1, 1, 0
+                ai.__dict__.update(project.ai_data_list[1])
             ai.state_machine.handle_event(('CHANGE_IDLE', 0))
 
     @staticmethod
@@ -152,7 +157,7 @@ class Attack:
         ai.frame = (ai.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         if get_time() - ai.wait_time > 0.5:
             ch_x, _, _, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
-            if ch_x == -1000:    # 캐릭터가 죽어있으면
+            if ch_x == -1000:  # 캐릭터가 죽어있으면
                 ai.first_in_pattern = False
                 ai.state_machine.handle_event(('CHANGE_IDLE', 0))
             else:
@@ -198,7 +203,6 @@ class Run:
         ai.frame = (ai.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * 1.5 * game_framework.frame_time) % 5
         ai.x += ai.dir * RUN_SPEED_PPS * 2.5 * game_framework.frame_time
         ai.x = clamp(70, ai.x, 820)
-        pass
 
     @staticmethod
     def draw(ai):
@@ -235,7 +239,7 @@ class Move:
         ai.x += ai.dir * RUN_SPEED_PPS * game_framework.frame_time
         ai.x = clamp(70, ai.x, 820)
         if get_time() - ai.sword_time > 0.5:
-            sword_change_cnt = random.randint(1,4)
+            sword_change_cnt = random.randint(1, 4)
             sword_change(ai)
             ai.sword_time = get_time()
         if ai.first_in_pattern == True:
@@ -281,7 +285,7 @@ class Idle:
         global sword_change_cnt
         ai.frame = (ai.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         if get_time() - ai.sword_time > 0.5:
-            sword_change_cnt = random.randint(1,4)
+            sword_change_cnt = random.randint(1, 4)
             sword_change(ai)
             ai.sword_time = get_time()
         if ai.first_in_pattern == True:
@@ -324,7 +328,7 @@ class StateMachine:
             Move: {Change_Idle: Idle, Change_Run: Run, Change_Attack: Attack,
                    Change_Death: Death, Change_Win: Win},
             Run: {Change_Idle: Idle, Change_Move: Move, Change_Attack: Attack,
-                   Change_Death: Death, Change_Win: Win},
+                  Change_Death: Death, Change_Win: Win},
             Attack: {Change_Idle: Idle, Change_Move: Move, Change_Death: Death, Change_Win: Win},
             Death: {Change_Idle: Idle},
             Win: {},
@@ -363,16 +367,12 @@ class StateMachine:
 
     def draw(self):
         self.cur_state.draw(self.ai)
-        draw_rectangle(*self.cur_state.character_get_bb(self.ai))
-        draw_rectangle(*self.cur_state.sword_get_bb(self.ai))
 
 
 class Ai:
-    def __init__(self):
-        self.x = 780
-        self.sword_position = 1  # 검의 위치 / 상단 2 , 중단 1, 하단 0
-        self.face_dir = 0  # 캐릭터가 바라보는 방향  / 왼쪽 0, 오른쪽 1
-        self.dir = 0
+    def __init__(self, x=0, face_dir=0, dir=0, sword_position=0):
+        self.x, self.face_dir = x, face_dir  # 캐릭터가 바라보는 방향  / 왼쪽 0, 오른쪽 1
+        self.dir, self.sword_position = dir, sword_position  # 검의 위치 / 상단 2 , 중단 1, 하단 0
         self.frame = 0
         self.pattern_check = 0
         self.first_in_pattern = False
@@ -407,7 +407,7 @@ class Ai:
         elif self.face_dir == 1:
             self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time
 
-    def ai_behind_character(self):     # ai가 주인공보다 오른쪽에 있는 경우
+    def ai_behind_character(self):  # ai가 주인공보다 오른쪽에 있는 경우
         ai_x, _, _, _ = self.state_machine.cur_state.character_get_bb(self)
         _, _, ch_x, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
         if ai_x >= ch_x:
@@ -415,7 +415,7 @@ class Ai:
         else:
             return BehaviorTree.FAIL
 
-    def ai_front_character(self):     # ai가 주인공보다 왼쪽에 있는 경우
+    def ai_front_character(self):  # ai가 주인공보다 왼쪽에 있는 경우
         _, _, ai_x, _ = self.state_machine.cur_state.character_get_bb(self)
         ch_x, _, _, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
         if ai_x < ch_x:
@@ -425,11 +425,10 @@ class Ai:
 
     def run_range(self):
         _, _, ch_x, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
-        if ch_x + 220 < self.x :
+        if ch_x + 220 < self.x:
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.FAIL
-
 
     def run_to_wall(self):
         self.dir, self.face_dir = -1, 0
@@ -451,23 +450,23 @@ class Ai:
     def total_pattern_range(self):
         _, _, ch_x, _ = project.character.state_machine.cur_state.character_get_bb(project.character)
         if ch_x + 150 >= self.x and ch_x < self.x + 70:
-            if self.first_in_pattern == False:       # 만약 범위에 처음 들어오면
-                self.first_in_pattern = True         # 처음이 아니라고 표시
+            if self.first_in_pattern == False:  # 만약 범위에 처음 들어오면
+                self.first_in_pattern = True  # 처음이 아니라고 표시
                 self.pattern_check = random.randint(0, 3)  # 패턴 3가지 랜덤 행동
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.FAIL
 
     def total_pattern(self):
-        if self.pattern_check == 0 and self.state_machine.cur_state != Death:         # 가만히 있기
+        if self.pattern_check == 0 and self.state_machine.cur_state != Death:  # 가만히 있기
             self.face_dir = 0
             self.state_machine.handle_event(('CHANGE_IDLE', 0))
             return BehaviorTree.RUNNING
-        elif self.pattern_check == 1 and self.state_machine.cur_state != Death:       # 뒤로 이동
+        elif self.pattern_check == 1 and self.state_machine.cur_state != Death:  # 뒤로 이동
             self.dir, self.face_dir = 1, 0
             self.state_machine.handle_event(('CHANGE_MOVE', 0))
             return BehaviorTree.RUNNING
-        elif self.pattern_check == 2 and self.state_machine.cur_state != Death:       # 공격
+        elif self.pattern_check == 2 and self.state_machine.cur_state != Death:  # 공격
             self.face_dir = 0
             self.state_machine.handle_event(('CHANGE_ATTACK', 0))
             return BehaviorTree.SUCCESS
