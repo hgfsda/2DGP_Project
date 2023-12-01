@@ -24,6 +24,7 @@ def init():
     global character
     global ai
     global system
+    global sword_sound
 
     stage = Stage()
     game_world.add_object(stage, 0)
@@ -39,6 +40,9 @@ def init():
 
     game_world.add_collision_pair('character:ai', character, ai)
     game_world.add_collision_pair('ai:character', ai, character)
+
+    sword_sound = load_wav('sound\\sword.wav')
+    sword_sound.set_volume(22)
 
 
 def finish():

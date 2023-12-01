@@ -141,7 +141,7 @@ class Attack:
     def enter(ai, e):
         ai.frame = 0
         ai.wait_time = get_time()
-        pass
+        project.sword_sound.play()
 
     @staticmethod
     def exit(ai, e):
