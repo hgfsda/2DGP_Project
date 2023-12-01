@@ -61,6 +61,7 @@ class Win:
     def enter(ai, e):
         ai.frame = 0
         ai.wait_time = get_time()
+        main_system.win_move_check = True
         pass
 
     @staticmethod
@@ -381,7 +382,8 @@ class Ai:
 
     def update(self):
         self.state_machine.update()
-        self.bt.run()
+        if main_system.win_move_check == False:
+            self.bt.run()
 
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))

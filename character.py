@@ -71,6 +71,7 @@ class Win:
     def enter(character, e):
         character.frame = 0
         character.wait_time = get_time()
+        main_system.win_move_check = True
         pass
 
     @staticmethod
@@ -397,7 +398,8 @@ class Character:
         self.state_machine.update()
 
     def handle_event(self, event):
-        self.state_machine.handle_event(('INPUT', event))
+        if main_system.win_move_check == False:
+            self.state_machine.handle_event(('INPUT', event))
 
     def draw(self):
         self.state_machine.draw()
