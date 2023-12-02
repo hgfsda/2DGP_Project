@@ -18,11 +18,11 @@ def init():
     start_stage_image = load_image('image\\start_stage.png')
     start_word_image = load_image('image\\start.png')
     title_bgm = load_music('sound\\title.mp3')
-    title_bgm.set_volume(8)
+    title_bgm.set_volume(10)
     title_bgm.repeat_play()
     choose_menu = load_wav('sound\\choose_menu.wav')
     confirmed_menu = load_wav('sound\\confirmed_menu.wav')
-    choose_menu.set_volume(22)
+    choose_menu.set_volume(80)
     confirmed_menu.set_volume(13)
 
 
