@@ -55,7 +55,7 @@ def Change_Win(e):
     return e[0] == 'CHANGE_WIN'
 
 
-PIXEL_PER_METER = (10.0 / 0.3)
+PIXEL_PER_METER = (10.0 / 0.2)
 RUN_SPEED_KMPH = 10.0
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
@@ -350,7 +350,7 @@ class StateMachine:
 
     def update(self):
         self.cur_state.do(self.character)
-        if main_system.character_kill == 15:
+        if main_system.character_kill == 10:
             self.handle_event(('CHANGE_WIN', 0))
         if self.character.x > 815 and stage.character_stage < 5:
             stage.character_stage += 1
